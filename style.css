@@ -151,6 +151,42 @@ nav a:hover { color: var(--accent-primary); }
     display: flex;
     justify-content: flex-end;
 }
+/* Hero Trust */
+.hero-trust {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.avatars {
+    display: flex;
+    align-items: center;
+}
+.avatars img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid var(--bg-section);
+    margin-left: -15px;
+    object-fit: cover;
+}
+.avatars img:first-child { margin-left: 0; }
+.avatar-more {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border: 3px solid var(--bg-section);
+    margin-left: -15px;
+    z-index: 1;
+}
+.hero-trust p { margin-bottom: 0; font-size: 1rem; color: var(--text-secondary); }
 .image-mask {
     width: 100%;
     max-width: 550px;
@@ -310,6 +346,29 @@ nav a:hover { color: var(--accent-primary); }
 }
 .benefit-item h3 { font-size: 1.5rem; margin-bottom: 15px; position: relative; z-index: 2; color: var(--accent-primary); }
 .benefit-item p { color: var(--text-secondary); position: relative; z-index: 2; font-size: 1.05rem;}
+
+/* Testimonials Section */
+.testimonials { padding: 100px 0; background: #fff; }
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+.review-card {
+    background: var(--bg-section);
+    padding: 40px 30px;
+    border-radius: 24px;
+    border: 1px solid rgba(232, 29, 96, 0.05);
+    transition: var(--transition);
+}
+.review-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(232, 29, 96, 0.08); }
+.review-stars { color: #f59e0b; margin-bottom: 20px; font-size: 1.1rem; }
+.review-stars i { margin-right: 5px; }
+.review-text { font-size: 1.05rem; color: var(--text-primary); font-style: italic; margin-bottom: 30px; line-height: 1.7; }
+.review-author { display: flex; align-items: center; gap: 15px; }
+.review-author img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+.review-author h4 { font-size: 1.1rem; margin-bottom: 2px; color: var(--text-primary); }
+.review-author span { font-size: 0.9rem; color: var(--text-secondary); }
 
 
 /* CTA Section */
