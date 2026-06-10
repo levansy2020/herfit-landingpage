@@ -8,11 +8,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let hasGreeted = false;
 
+    function showSuggestedQuestions() {
+        const suggestDiv = document.createElement('div');
+        suggestDiv.classList.add('chat-suggestions');
+        
+        const suggestions = [
+            "Khóa học này dạy những gì?",
+            "Thời gian học bao lâu?",
+            "Học phí và ưu đãi ra sao?",
+            "Mình chưa tập bao giờ có học được không?"
+        ];
+
+        suggestions.forEach(text => {
+            const btn = document.createElement('button');
+            btn.classList.add('chat-suggest-btn');
+            btn.innerText = text;
+            btn.onclick = () => {
+                inputField.value = text;
+                handleUserInput();
+                suggestDiv.remove();
+            };
+            suggestDiv.appendChild(btn);
+        });
+        
+        messagesContainer.appendChild(suggestDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
     toggleBtn.addEventListener('click', () => {
         chatWindow.classList.add('open');
         if (!hasGreeted) {
             setTimeout(() => {
                 addMessage("Dạ, mình chào bạn! Cảm ơn bạn đã quan tâm đến Khóa đào tạo HLV chuyên sâu cho Nữ giới - HerFit Trainer K1. Bạn đang muốn tìm hiểu thêm về lộ trình học, hay đang băn khoăn điều gì về nghề PT, cứ thoải mái chia sẻ để mình hỗ trợ nhé!", 'bot');
+                showSuggestedQuestions();
                 hasGreeted = true;
             }, 500);
         }
@@ -90,7 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (let item of qaData) {
                 if (item.keywords.some(kw => lowerText.includes(kw))) {
-                    addMessage(item.answer, 'bot');
+                    let finalAnswer = item.answer;
+                    if (!finalAnswer.includes('chat-btn-link')) {
+                        finalAnswer += '<br><br>Để được tư vấn chi tiết hơn, bạn có thể để lại thông tin tại đây nhé:<br><a href="#register" onclick="document.getElementById(\\'chatbot-window\\').classList.remove(\\'open\\');" class="chat-btn-link">LIÊN HỆ TRỰC TIẾP</a>';
+                    }
+                    addMessage(finalAnswer, 'bot');
                     responded = true;
                     break;
                 }

@@ -593,3 +593,30 @@ footer p { color: var(--text-secondary); font-size: 0.9rem; }
     font-weight: 600;
 }
 
+
+/* Chat Suggestions */
+.chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.chat-suggest-btn {
+    background: rgba(232, 29, 96, 0.1);
+    color: var(--accent-primary);
+    border: 1px solid rgba(232, 29, 96, 0.2);
+    border-radius: 15px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.chat-suggest-btn:hover {
+    background: var(--accent-primary);
+    color: #fff;
+}
+
