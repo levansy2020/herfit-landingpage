@@ -1,0 +1,19 @@
+{
+  "name": "herfit-landingpage",
+  "version": "1.0.0",
+  "description": "HerFit Trainer Academy landing page",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'No build step required for static site'",
+    "dev": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000"
+  },
+  "keywords": [
+    "fitness",
+    "landing-page"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  }
+}
