@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán - HerFit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .checkout-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-pay {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 15px 10px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-pay:hover {
+            opacity: 0.9;
+        }
+        .qr-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        .qr-section.active {
+            display: block;
+        }
+        #qr-image {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .instruction {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 15px;
+        }
+        .success-msg {
+            display: none;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">HerFit</div>
+        <a href="index.html" class="cta-button">Quay lại</a>
+    </header>
+
+    <div class="checkout-container">
+        <!-- Cột Form -->
+        <div class="checkout-form">
+            <h2>Thông tin thanh toán</h2>
+            <p style="margin-bottom: 20px; color: #666;">Vui lòng điền thông tin để chúng tôi khởi tạo mã thanh toán tự động.</p>
+            
+            <div class="form-group">
+                <label>Họ và Tên</label>
+                <input type="text" id="cusName" placeholder="Ví dụ: Nguyễn Văn A" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Số điện thoại / Email</label>
+                <input type="text" id="cusContact" placeholder="Ví dụ: 0901234567" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Sản phẩm muốn mua</label>
+                <select id="productSelect">
+                    <option value="test_2000" data-price="2000">Sản phẩm Test (2.000đ)</option>
+                    <option value="ebook_pt" data-price="299000">Ebook: Bí quyết tư vấn chốt sale PT (299.000đ)</option>
+                    <option value="course_k1" data-price="7500000">Khóa học HerFit Trainer K1 (7.500.000đ)</option>
+                </select>
+            </div>
+
+            <button class="btn-pay" id="btn-generate">Thanh Toán Ngay</button>
+        </div>
+
+        <!-- Cột QR Code -->
+        <div class="qr-section" id="qr-section">
+            <h3>Quét mã để thanh toán</h3>
+            <p>Hệ thống sẽ tự động xác nhận ngay khi bạn chuyển tiền thành công.</p>
+            
+            <img id="qr-image" src="" alt="QR Code">
+            
+            <div class="instruction">
+                <p><strong>Nội dung CK:</strong> <span id="txt-content" style="color: var(--accent-primary); font-weight: bold;"></span></p>
+                <p><strong>Số tiền:</strong> <span id="txt-amount" style="font-weight: bold;"></span> VNĐ</p>
+                <p>Ngân hàng: MBBank | Chủ TK: LE VAN SY</p>
+            </div>
+
+            <div class="success-msg" id="success-msg">
+                🎉 Thanh toán thành công! Cảm ơn bạn đã mua hàng.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btn-generate').addEventListener('click', function() {
+            const name = document.getElementById('cusName').value;
+            const contact = document.getElementById('cusContact').value;
+            const select = document.getElementById('productSelect');
+            const price = select.options[select.selectedIndex].getAttribute('data-price');
+            
+            if(!name || !contact) {
+                alert('Vui lòng điền đủ Họ tên và SĐT/Email!');
+                return;
+            }
+
+            // Tạo mã đơn hàng ngẫu nhiên
+            const orderId = 'DH' + Math.floor(Math.random() * 10000);
+            
+            // Thông tin ngân hàng của User
+            const bank = 'MBBank';
+            const acc = '0987873729';
+            const holder = 'LE VAN SY';
+            
+            // Xây dựng link VietQR từ SePay
+            const qrUrl = `https://qr.sepay.vn/img?acc=${acc}&bank=${bank}&amount=${price}&des=${orderId}&template=compact&showinfo=true&holder=${encodeURIComponent(holder)}`;
+
+            // Hiển thị QR
+            document.getElementById('qr-image').src = qrUrl;
+            document.getElementById('txt-content').innerText = orderId;
+            document.getElementById('txt-amount').innerText = parseInt(price).toLocaleString('vi-VN');
+            document.getElementById('qr-section').classList.add('active');
+
+            // Simulate the backend API call to create pending order (This will be connected to real DB in Step 3/4)
+            fetch('/api/create_order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, contact, orderId, price, status: 'pending' })
+            }).catch(e => console.log('Đang chạy Frontend-only mode, bỏ qua API call.'));
+            
+            // Start polling order status
+            checkOrderStatus(orderId);
+        });
+
+        function checkOrderStatus(orderId) {
+            const interval = setInterval(async () => {
+                try {
+                    const res = await fetch('/api/check_order/' + orderId);
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        clearInterval(interval);
+                        document.getElementById('qr-image').style.display = 'none';
+                        document.querySelector('.instruction').style.display = 'none';
+                        document.getElementById('success-msg').style.display = 'block';
+                    }
+                } catch(e) {}
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

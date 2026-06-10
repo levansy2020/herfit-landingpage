@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - HerFit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f4f7f6; margin: 0; padding: 0; }
+        .sidebar { width: 250px; background: #2c3e50; color: white; position: fixed; height: 100vh; padding-top: 20px; }
+        .sidebar h2 { text-align: center; color: #e81d60; margin-bottom: 30px; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar ul li { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #34495e; transition: 0.3s; }
+        .sidebar ul li:hover, .sidebar ul li.active { background: #e81d60; }
+        .main-content { margin-left: 250px; padding: 30px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; margin-top: 20px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #e81d60; color: white; }
+        tr:hover { background: #f1f1f1; }
+        .btn { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; }
+        .btn-success { background: #2ecc71; }
+        .btn-warning { background: #f39c12; }
+        .btn-primary { background: #3498db; }
+        .header-action { display: flex; justify-content: space-between; align-items: center; }
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #f39c12; color: white; }
+        .status-success { background: #2ecc71; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>HerFit Admin</h2>
+    <ul>
+        <li class="tab-link active" onclick="openTab('products', this)">📦 Sản phẩm</li>
+        <li class="tab-link" onclick="openTab('customers', this)">👥 Khách hàng</li>
+        <li class="tab-link" onclick="openTab('orders', this)">🛒 Đơn hàng</li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <!-- SẢN PHẨM -->
+    <div id="products" class="tab-content active">
+        <div class="header-action">
+            <h2>Danh sách Sản phẩm</h2>
+            <button class="btn btn-primary" onclick="alert('Tính năng đang phát triển')">Thêm Mới</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Tên sản phẩm</th><th>Giá (VNĐ)</th><th>Số lượng còn</th><th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="tb-products"></tbody>
+        </table>
+    </div>
+
+    <!-- KHÁCH HÀNG -->
+    <div id="customers" class="tab-content">
+        <div class="header-action">
+            <h2>Danh sách Khách hàng</h2>
+            <button class="btn btn-primary" onclick="alert('Tính năng đang phát triển')">Thêm Mới</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Tên</th><th>SĐT</th><th>Ngày đăng ký</th><th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="tb-customers"></tbody>
+        </table>
+    </div>
+
+    <!-- ĐƠN HÀNG -->
+    <div id="orders" class="tab-content">
+        <div class="header-action">
+            <h2>Danh sách Đơn hàng</h2>
+            <button class="btn btn-primary" onclick="alert('Tính năng đang phát triển')">Thêm Mới</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã Đơn</th><th>Khách Hàng</th><th>Sản Phẩm</th><th>Số Tiền</th><th>Trạng Thái</th><th>Ngày Mua</th><th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="tb-orders"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function openTab(tabId, el) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        el.classList.add('active');
+        loadData();
+    }
+
+    function formatVND(n) { return new Intl.NumberFormat('vi-VN').format(n) + ' đ'; }
+
+    async function loadData() {
+        // Load Products
+        const pRes = await fetch('/api/products');
+        const products = await pRes.json();
+        document.getElementById('tb-products').innerHTML = products.map(p => 
+            `<tr><td>${p.id}</td><td>${p.name}</td><td>${formatVND(p.price)}</td><td>${p.quantity}</td>
+            <td><button class="btn btn-warning">Sửa</button></td></tr>`
+        ).join('');
+
+        // Load Customers
+        const cRes = await fetch('/api/customers');
+        const customers = await cRes.json();
+        document.getElementById('tb-customers').innerHTML = customers.map(c => 
+            `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.register_date}</td>
+            <td><button class="btn btn-warning">Sửa</button></td></tr>`
+        ).join('');
+
+        // Load Orders
+        const oRes = await fetch('/api/orders');
+        const orders = await oRes.json();
+        document.getElementById('tb-orders').innerHTML = orders.map(o => 
+            `<tr><td>${o.order_code}</td><td>${o.customer_name || 'N/A'}</td><td>${o.product_name || 'N/A'}</td>
+            <td>${formatVND(o.amount)}</td>
+            <td><span class="status-badge status-${o.status}">${o.status.toUpperCase()}</span></td>
+            <td>${o.order_date}</td>
+            <td>
+                ${o.status === 'pending' ? `<button class="btn btn-success" onclick="markSuccess('${o.order_code}')">Duyệt (Thủ công)</button>` : ''}
+            </td></tr>`
+        ).join('');
+    }
+
+    async function markSuccess(orderCode) {
+        if(confirm('Xác nhận đã nhận được tiền cho đơn hàng ' + orderCode + '?')) {
+            await fetch('/api/orders/update_status', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({order_code: orderCode, status: 'success'})
+            });
+            loadData();
+        }
+    }
+
+    // Load initial data
+    loadData();
+    setInterval(loadData, 5000); // Tự động reload sau mỗi 5s
+</script>
+
+</body>
+</html>
