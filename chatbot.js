@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             keywords: ['đăng ký', 'mua', 'giữ chỗ', 'form'],
-            answer: 'Mình thấy định hướng của bạn rất phù hợp với giá trị mà HerFit đang xây dựng. Cơ hội nhận học bổng 50% (chỉ còn 7.500.000 VNĐ) chỉ còn vài suất, bạn tranh thủ đăng ký tại đây nhé: <br><a href="https://academy.levansy.com" target="_blank" class="chat-btn-link">ĐĂNG KÝ DANH SÁCH CHỜ</a>'
+            answer: 'Mình thấy định hướng của bạn rất phù hợp với giá trị mà HerFit đang xây dựng. Cơ hội nhận học bổng 50% (chỉ còn 7.500.000 VNĐ) chỉ còn vài suất, bạn tranh thủ đăng ký tại đây nhé: <br><a href="#register" onclick="document.getElementById(\'chatbot-window\').classList.remove(\'open\');" class="chat-btn-link">ĐĂNG KÝ DANH SÁCH CHỜ</a>'
         },
         {
             keywords: ['nghĩ', 'phân vân', 'từ từ', 'xem xét'],
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!responded) {
-                addMessage('Dạ, mình hiểu. Tụi mình sẽ cần trao đổi kỹ hơn để hỗ trợ bạn tốt nhất. Bạn vui lòng để lại thông tin tại đây nhé, đội ngũ HerFit sẽ liên hệ lại ngay: <br><a href="https://academy.levansy.com" target="_blank" class="chat-btn-link">TƯ VẤN THÊM</a>', 'bot');
+                addMessage('Dạ, mình hiểu. Tụi mình sẽ cần trao đổi kỹ hơn để hỗ trợ bạn tốt nhất. Bạn vui lòng để lại thông tin tại đây nhé, đội ngũ HerFit sẽ liên hệ lại ngay: <br><a href="#register" onclick="document.getElementById(\'chatbot-window\').classList.remove(\'open\');" class="chat-btn-link">TƯ VẤN THÊM</a>', 'bot');
             }
         }, 600);
     }
