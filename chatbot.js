@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (item.keywords.some(kw => lowerText.includes(kw))) {
                     let finalAnswer = item.answer;
                     if (!finalAnswer.includes('chat-btn-link')) {
-                        finalAnswer += '<br><br>Để được tư vấn chi tiết hơn, bạn có thể để lại thông tin tại đây nhé:<br><a href="#register" onclick="document.getElementById(\\'chatbot-window\\').classList.remove(\\'open\\');" class="chat-btn-link">LIÊN HỆ TRỰC TIẾP</a>';
+                        finalAnswer += '<br><br>Để được tư vấn chi tiết hơn, bạn có thể để lại thông tin tại đây nhé:<br><a href="#register" onclick="document.getElementById(\'chatbot-window\').classList.remove(\'open\');" class="chat-btn-link">LIÊN HỆ TRỰC TIẾP</a>';
                     }
                     addMessage(finalAnswer, 'bot');
                     responded = true;
