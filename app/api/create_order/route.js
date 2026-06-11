@@ -10,10 +10,14 @@ export async function POST(request) {
   
   if (existingCust) {
     cust_id = existingCust.id;
+    // Nếu có email mới thì update lại (tuỳ chọn)
+    if (data.email) {
+      await supabase.from('customers').update({ email: data.email }).eq('id', cust_id);
+    }
   } else {
     const { data: newCust, error: errC } = await supabase.from('customers')
-      .insert([{ name: data.name, phone: data.contact }])
-      .select('id').single();
+      .insert([{ name: data.name, phone: data.contact, email: data.email }])
+      .select().single();
     if (errC) return NextResponse.json({ error: errC.message }, { status: 500 });
     cust_id = newCust.id;
   }

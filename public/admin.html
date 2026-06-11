@@ -66,7 +66,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th><th>Tên</th><th>SĐT</th><th>Ngày đăng ký</th><th>Hành động</th>
+                    <th>ID</th><th>Tên</th><th>SĐT</th><th>Email</th><th>Ngày đăng ký</th><th>Hành động</th>
                 </tr>
             </thead>
             <tbody id="tb-customers"></tbody>
@@ -119,9 +119,9 @@
             const cRes = await fetch('/api/customers');
             const customers = await cRes.json();
             document.getElementById('tb-customers').innerHTML = customers.map(c => 
-                `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.register_date}</td>
+                `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.email || ''}</td><td>${c.register_date}</td>
                 <td>
-                    <button class="btn btn-warning" onclick="editCustomer(${c.id}, '${c.name}', '${c.phone}')">Sửa</button>
+                    <button class="btn btn-warning" onclick="editCustomer(${c.id}, '${c.name}', '${c.phone}', '${c.email || ''}')">Sửa</button>
                     <button class="btn" style="background:#e74c3c;color:white;" onclick="deleteCustomer(${c.id})">Xóa</button>
                 </td></tr>`
             ).join('');
@@ -187,22 +187,24 @@
         const name = prompt('Tên khách hàng:');
         if(!name) return;
         const phone = prompt('Số điện thoại:');
+        const email = prompt('Email:');
         await fetch('/api/customers', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({name, phone, zalo: phone})
+            body: JSON.stringify({name, phone, email, zalo: phone})
         });
         loadData();
     }
 
-    async function editCustomer(id, oldName, oldPhone) {
+    async function editCustomer(id, oldName, oldPhone, oldEmail) {
         const name = prompt('Tên mới:', oldName);
         if(!name) return;
         const phone = prompt('SĐT mới:', oldPhone);
+        const email = prompt('Email mới:', oldEmail);
         await fetch('/api/customers', {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id, name, phone})
+            body: JSON.stringify({id, name, phone, email})
         });
         loadData();
     }

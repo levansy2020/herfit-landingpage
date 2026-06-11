@@ -116,8 +116,13 @@
             </div>
             
             <div class="form-group">
-                <label>Số điện thoại / Email</label>
+                <label>Số điện thoại</label>
                 <input type="text" id="cusContact" placeholder="Ví dụ: 0901234567" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Email (Nhận xác nhận đơn hàng)</label>
+                <input type="email" id="cusEmail" placeholder="Ví dụ: email@domain.com" required>
             </div>
             
             <div class="form-group">
@@ -156,18 +161,23 @@
         document.getElementById('btn-generate').addEventListener('click', function() {
             const name = document.getElementById('cusName').value;
             const contact = document.getElementById('cusContact').value;
+            const email = document.getElementById('cusEmail').value;
             const select = document.getElementById('productSelect');
             const price = select.options[select.selectedIndex].getAttribute('data-price');
             
-            if(!name || !contact) {
-                alert('Vui lòng điền đủ Họ tên và SĐT/Email!');
+            if(!name || !contact || !email) {
+                alert('Vui lòng điền đủ Họ tên, Số điện thoại và Email!');
                 return;
             }
 
             const phoneRegex = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!phoneRegex.test(contact) && !emailRegex.test(contact)) {
-                alert('Vui lòng nhập Số điện thoại hợp lệ (10 số, bắt đầu bằng 0 hoặc +84) hoặc Email hợp lệ!');
+            if (!phoneRegex.test(contact)) {
+                alert('Vui lòng nhập Số điện thoại hợp lệ (10 số, bắt đầu bằng 0 hoặc +84)!');
+                return;
+            }
+            if (!emailRegex.test(email)) {
+                alert('Vui lòng nhập Email hợp lệ!');
                 return;
             }
 
@@ -193,11 +203,11 @@
             document.querySelector('.checkout-container').style.gridTemplateColumns = '1fr';
             document.querySelector('.checkout-container').style.maxWidth = '500px';
 
-            // Simulate the backend API call to create pending order (This will be connected to real DB in Step 3/4)
+            // Simulate the backend API call to create pending order
             fetch('/api/create_order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, contact, orderId, price, status: 'pending' })
+                body: JSON.stringify({ name, contact, email, orderId, price, status: 'pending' })
             }).catch(e => console.log('Đang chạy Frontend-only mode, bỏ qua API call.'));
             
             // Start polling order status
