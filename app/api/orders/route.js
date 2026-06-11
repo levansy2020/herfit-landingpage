@@ -11,6 +11,7 @@ export async function GET() {
     amount,
     status,
     order_date,
+    customer_name,
     customers ( name ),
     products ( name )
   `).order('order_date', { ascending: false });
@@ -22,7 +23,7 @@ export async function GET() {
     amount: o.amount,
     status: o.status,
     order_date: o.order_date,
-    customer_name: o.customers?.name,
+    customer_name: o.customer_name || o.customers?.name,
     product_name: o.products?.name
   }));
   
