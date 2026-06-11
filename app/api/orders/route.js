@@ -53,7 +53,7 @@ export async function POST(request) {
     `;
     await sendEmail({
       to: data.email,
-      subject: \`Xác nhận đơn hàng \${data.order_code} - HerFit\`,
+      subject: `Xác nhận đơn hàng ${data.order_code} - HerFit`,
       html: htmlContent
     });
   }
