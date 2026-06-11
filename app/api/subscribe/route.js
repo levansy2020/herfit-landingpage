@@ -79,9 +79,13 @@ export async function POST(request) {
 
     if (isTest) {
       // Chế độ test: Gửi cả 3 email ngay lập tức
-      await resend.emails.send({ from: fromEmail, to: email, subject: 'Chào bạn, mừng bạn đến với cộng đồng HerFit! 👋', html: email1Content });
-      await resend.emails.send({ from: fromEmail, to: email, subject: 'Sự thật về chốt sale: Bạn không cần phải "ép" khách hàng mua thẻ', html: email2Content });
-      await resend.emails.send({ from: fromEmail, to: email, subject: 'Cánh cửa trở thành PT chuyên nghiệp (Không ép sale, không body shaming) đã mở', html: email3Content });
+      const r1 = await resend.emails.send({ from: fromEmail, to: email, subject: 'Chào bạn, mừng bạn đến với cộng đồng HerFit! 👋', html: email1Content });
+      const r2 = await resend.emails.send({ from: fromEmail, to: email, subject: 'Sự thật về chốt sale: Bạn không cần phải "ép" khách hàng mua thẻ', html: email2Content });
+      const r3 = await resend.emails.send({ from: fromEmail, to: email, subject: 'Cánh cửa trở thành PT chuyên nghiệp (Không ép sale, không body shaming) đã mở', html: email3Content });
+      
+      if (r1.error || r2.error || r3.error) {
+        throw new Error(`Resend Error: ${JSON.stringify(r1.error || r2.error || r3.error)}`);
+      }
     } else {
       // Gửi thực tế: Sử dụng scheduledAt
       const now = new Date();
@@ -90,7 +94,7 @@ export async function POST(request) {
       const day3 = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 
       // Gửi Email 1 ngay
-      await resend.emails.send({ 
+      const r1 = await resend.emails.send({ 
         from: fromEmail, 
         to: email, 
         subject: 'Chào bạn, mừng bạn đến với cộng đồng HerFit! 👋', 
@@ -98,7 +102,7 @@ export async function POST(request) {
       });
 
       // Gửi Email 2 sau 2 ngày
-      await resend.emails.send({ 
+      const r2 = await resend.emails.send({ 
         from: fromEmail, 
         to: email, 
         subject: 'Sự thật về chốt sale: Bạn không cần phải "ép" khách hàng mua thẻ', 
@@ -107,13 +111,17 @@ export async function POST(request) {
       });
 
       // Gửi Email 3 sau 3 ngày
-      await resend.emails.send({ 
+      const r3 = await resend.emails.send({ 
         from: fromEmail, 
         to: email, 
         subject: 'Cánh cửa trở thành PT chuyên nghiệp (Không ép sale, không body shaming) đã mở', 
         html: email3Content,
         scheduledAt: day3.toISOString()
       });
+      
+      if (r1.error || r2.error || r3.error) {
+        throw new Error(`Resend Error: ${JSON.stringify(r1.error || r2.error || r3.error)}`);
+      }
     }
 
     return NextResponse.json({ status: 'success' });
