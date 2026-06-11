@@ -11,7 +11,8 @@ export async function POST(request) {
   if (existingCust) {
     cust_id = existingCust.id;
     // Cập nhật lại tên khách hàng nếu họ nhập tên mới với cùng số điện thoại
-    await supabase.from('customers').update({ name: data.name }).eq('id', cust_id);
+    const { error: errUpdate } = await supabase.from('customers').update({ name: data.name }).eq('id', cust_id);
+    if (errUpdate) return NextResponse.json({ error: 'Update customer error: ' + errUpdate.message }, { status: 500 });
   } else {
     const { data: newCust, error: errC } = await supabase.from('customers')
       .insert([{ name: data.name, phone: data.contact }])
