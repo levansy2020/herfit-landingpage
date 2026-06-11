@@ -45,7 +45,7 @@
     <div id="products" class="tab-content active">
         <div class="header-action">
             <h2>Danh sách Sản phẩm</h2>
-            <button class="btn btn-primary" onclick="alert('Tính năng đang phát triển')">Thêm Mới</button>
+            <button class="btn btn-primary" onclick="addProduct()">Thêm Mới</button>
         </div>
         <table>
             <thead>
@@ -61,7 +61,7 @@
     <div id="customers" class="tab-content">
         <div class="header-action">
             <h2>Danh sách Khách hàng</h2>
-            <button class="btn btn-primary" onclick="alert('Tính năng đang phát triển')">Thêm Mới</button>
+            <button class="btn btn-primary" onclick="addCustomer()">Thêm Mới</button>
         </div>
         <table>
             <thead>
@@ -102,34 +102,65 @@
     function formatVND(n) { return new Intl.NumberFormat('vi-VN').format(n) + ' đ'; }
 
     async function loadData() {
-        // Load Products
-        const pRes = await fetch('/api/products');
-        const products = await pRes.json();
-        document.getElementById('tb-products').innerHTML = products.map(p => 
-            `<tr><td>${p.id}</td><td>${p.name}</td><td>${formatVND(p.price)}</td><td>${p.quantity}</td>
-            <td><button class="btn btn-warning">Sửa</button></td></tr>`
-        ).join('');
+        try {
+            // Load Products
+            const pRes = await fetch('/api/products');
+            if (!pRes.ok) throw new Error('API Lỗi (Có thể thiếu Biến môi trường trên Vercel)');
+            const products = await pRes.json();
+            document.getElementById('tb-products').innerHTML = products.map(p => 
+                `<tr><td>${p.id}</td><td>${p.name}</td><td>${formatVND(p.price)}</td><td>${p.quantity}</td>
+                <td><button class="btn btn-warning" onclick="alert('Đang phát triển')">Sửa</button></td></tr>`
+            ).join('');
 
-        // Load Customers
-        const cRes = await fetch('/api/customers');
-        const customers = await cRes.json();
-        document.getElementById('tb-customers').innerHTML = customers.map(c => 
-            `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.register_date}</td>
-            <td><button class="btn btn-warning">Sửa</button></td></tr>`
-        ).join('');
+            // Load Customers
+            const cRes = await fetch('/api/customers');
+            const customers = await cRes.json();
+            document.getElementById('tb-customers').innerHTML = customers.map(c => 
+                `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.register_date}</td>
+                <td><button class="btn btn-warning" onclick="alert('Đang phát triển')">Sửa</button></td></tr>`
+            ).join('');
 
-        // Load Orders
-        const oRes = await fetch('/api/orders');
-        const orders = await oRes.json();
-        document.getElementById('tb-orders').innerHTML = orders.map(o => 
-            `<tr><td>${o.order_code}</td><td>${o.customer_name || 'N/A'}</td><td>${o.product_name || 'N/A'}</td>
-            <td>${formatVND(o.amount)}</td>
-            <td><span class="status-badge status-${o.status}">${o.status.toUpperCase()}</span></td>
-            <td>${o.order_date}</td>
-            <td>
-                ${o.status === 'pending' ? `<button class="btn btn-success" onclick="markSuccess('${o.order_code}')">Duyệt (Thủ công)</button>` : ''}
-            </td></tr>`
-        ).join('');
+            // Load Orders
+            const oRes = await fetch('/api/orders');
+            const orders = await oRes.json();
+            document.getElementById('tb-orders').innerHTML = orders.map(o => 
+                `<tr><td>${o.order_code}</td><td>${o.customer_name || 'N/A'}</td><td>${o.product_name || 'N/A'}</td>
+                <td>${formatVND(o.amount)}</td>
+                <td><span class="status-badge status-${o.status}">${o.status.toUpperCase()}</span></td>
+                <td>${o.order_date}</td>
+                <td>
+                    ${o.status === 'pending' ? `<button class="btn btn-success" onclick="markSuccess('${o.order_code}')">Duyệt (Thủ công)</button>` : ''}
+                </td></tr>`
+            ).join('');
+        } catch (e) {
+            console.error(e);
+            document.getElementById('tb-products').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">Lỗi tải dữ liệu: ${e.message}. Vui lòng kiểm tra lại Environment Variables (Biến môi trường) trên Vercel.</td></tr>`;
+        }
+    }
+
+    async function addProduct() {
+        const name = prompt('Tên sản phẩm:');
+        if(!name) return;
+        const price = prompt('Giá (VNĐ):');
+        const quantity = prompt('Số lượng:');
+        await fetch('/api/products', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, price: parseInt(price||0), description: '', quantity: parseInt(quantity||0)})
+        });
+        loadData();
+    }
+
+    async function addCustomer() {
+        const name = prompt('Tên khách hàng:');
+        if(!name) return;
+        const phone = prompt('Số điện thoại:');
+        await fetch('/api/customers', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, phone, zalo: phone})
+        });
+        loadData();
     }
 
     async function markSuccess(orderCode) {
