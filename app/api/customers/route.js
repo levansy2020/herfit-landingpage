@@ -15,3 +15,19 @@ export async function POST(request) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ status: 'success' });
 }
+
+export async function PUT(request) {
+  const data = await request.json();
+  const { error } = await supabase.from('customers')
+    .update({ name: data.name, phone: data.phone })
+    .eq('id', data.id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ status: 'success' });
+}
+
+export async function DELETE(request) {
+  const data = await request.json();
+  const { error } = await supabase.from('customers').delete().eq('id', data.id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ status: 'success' });
+}
