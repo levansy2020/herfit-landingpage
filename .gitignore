@@ -2,3 +2,5 @@ node_modules/
 .env.local
 brain.db
 __pycache__/
+
+resend_config.txt
