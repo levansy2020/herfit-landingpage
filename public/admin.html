@@ -223,12 +223,13 @@
     async function addOrder() {
         const order_code = prompt('Mã đơn hàng (VD: HF001):');
         if(!order_code) return;
+        const email = prompt('Email khách hàng (để gửi xác nhận):');
         const amount = prompt('Số tiền (VNĐ):');
         const status = prompt('Trạng thái (pending/success):', 'pending');
         await fetch('/api/orders', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({order_code, amount: parseInt(amount||0), status})
+            body: JSON.stringify({order_code, amount: parseInt(amount||0), status, email})
         });
         loadData();
     }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '../../../lib/supabase';
+import { sendEmail } from '../../../lib/resend';
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -36,6 +37,27 @@ export async function POST(request) {
     { order_code: data.order_code, amount: data.amount, status: data.status }
   ]);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (data.email) {
+    const htmlContent = `
+      <p>Chào bạn,</p>
+      <p>Cảm ơn bạn đã đặt hàng tại HerFit Wellness. Đơn hàng của bạn đã được ghi nhận thành công.</p>
+      <ul>
+        <li><strong>Mã đơn hàng:</strong> ${data.order_code}</li>
+        <li><strong>Số tiền:</strong> ${new Intl.NumberFormat('vi-VN').format(data.amount)} đ</li>
+        <li><strong>Trạng thái:</strong> ${data.status.toUpperCase()}</li>
+      </ul>
+      <p>Nếu có bất kỳ thắc mắc nào, cứ reply lại email này nhé.</p>
+      <br/>
+      <p>Thân mến,<br/>Lê Văn Sỹ</p>
+    `;
+    await sendEmail({
+      to: data.email,
+      subject: \`Xác nhận đơn hàng \${data.order_code} - HerFit\`,
+      html: htmlContent
+    });
+  }
+
   return NextResponse.json({ status: 'success' });
 }
 
