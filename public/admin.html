@@ -129,17 +129,18 @@
             // Load Orders
             const oRes = await fetch('/api/orders');
             const orders = await oRes.json();
-            document.getElementById('tb-orders').innerHTML = orders.map(o => 
-                `<tr><td>${o.order_code}</td><td>${o.customer_name || 'N/A'}</td><td>${o.product_name || 'N/A'}</td>
+            document.getElementById('tb-orders').innerHTML = orders.map(o => {
+                const safeStatus = o.status || 'pending';
+                return `<tr><td>${o.order_code}</td><td>${o.customer_name || 'N/A'}</td><td>${o.product_name || 'N/A'}</td>
                 <td>${formatVND(o.amount)}</td>
-                <td><span class="status-badge status-${o.status}">${o.status.toUpperCase()}</span></td>
+                <td><span class="status-badge status-${safeStatus}">${safeStatus.toUpperCase()}</span></td>
                 <td>${o.order_date}</td>
                 <td>
-                    ${o.status === 'pending' ? `<button class="btn btn-success" onclick="markSuccess('${o.order_code}')">Duyệt</button>` : ''}
-                    <button class="btn btn-warning" onclick="editOrder('${o.order_code}', ${o.amount}, '${o.status}')">Sửa</button>
+                    ${safeStatus === 'pending' ? `<button class="btn btn-success" onclick="markSuccess('${o.order_code}')">Duyệt</button>` : ''}
+                    <button class="btn btn-warning" onclick="editOrder('${o.order_code}', ${o.amount}, '${safeStatus}')">Sửa</button>
                     <button class="btn" style="background:#e74c3c;color:white;" onclick="deleteOrder('${o.order_code}')">Xóa</button>
-                </td></tr>`
-            ).join('');
+                </td></tr>`;
+            }).join('');
         } catch (e) {
             console.error(e);
             document.getElementById('tb-products').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">Lỗi tải dữ liệu: ${e.message}. Vui lòng kiểm tra lại Environment Variables (Biến môi trường) trên Vercel.</td></tr>`;
