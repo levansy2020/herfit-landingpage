@@ -7,11 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        body {
+            background-color: var(--bg-section);
+            color: var(--text-primary);
+        }
+        .checkout-section {
+            padding-top: 120px;
+            padding-bottom: 80px;
+        }
         .checkout-container {
-            max-width: 800px;
-            margin: 50px auto;
+            max-width: 900px;
+            margin: 0 auto;
             background: #fff;
-            padding: 30px;
+            padding: 40px;
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
             display: grid;
@@ -86,14 +94,19 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">HerFit</div>
-        <a href="index.html" class="cta-button">Quay lại</a>
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo-link">
+                <img src="logo.png" alt="HerFit Wellness Logo" class="logo-img" style="height: 60px;">
+            </a>
+            <a href="index.html" class="btn btn-primary" style="padding: 10px 24px;">Quay lại trang chủ</a>
+        </div>
     </header>
 
-    <div class="checkout-container">
-        <!-- Cột Form -->
-        <div class="checkout-form">
+    <section class="checkout-section">
+        <div class="container checkout-container">
+            <!-- Cột Form -->
+            <div class="checkout-form">
             <h2>Thông tin thanh toán</h2>
             <p style="margin-bottom: 20px; color: #666;">Vui lòng điền thông tin để chúng tôi khởi tạo mã thanh toán tự động.</p>
             
@@ -137,6 +150,7 @@
             </div>
         </div>
     </div>
+    </section>
 
     <script>
         document.getElementById('btn-generate').addEventListener('click', function() {
