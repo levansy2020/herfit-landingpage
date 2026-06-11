@@ -195,7 +195,8 @@
         function checkOrderStatus(orderId) {
             const interval = setInterval(async () => {
                 try {
-                    const res = await fetch('/api/check_order/' + orderId);
+                    // Thêm tham số t=Date.now() để chống lưu bộ nhớ đệm của trình duyệt
+                    const res = await fetch('/api/check_order/' + orderId + '?t=' + Date.now(), { cache: 'no-store' });
                     const data = await res.json();
                     if (data.status === 'success') {
                         clearInterval(interval);
