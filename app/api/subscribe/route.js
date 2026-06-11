@@ -78,9 +78,11 @@ export async function POST(request) {
     const fromEmail = 'Lê Văn Sỹ <hi@levansy.com>';
 
     if (isTest) {
-      // Chế độ test: Gửi cả 3 email ngay lập tức
+      // Chế độ test: Gửi cả 3 email ngay lập tức nhưng cách nhau 1 giây để tránh Rate Limit của Resend
       const r1 = await resend.emails.send({ from: fromEmail, to: email, subject: 'Chào bạn, mừng bạn đến với cộng đồng HerFit! 👋', html: email1Content });
+      await new Promise(resolve => setTimeout(resolve, 1000));
       const r2 = await resend.emails.send({ from: fromEmail, to: email, subject: 'Sự thật về chốt sale: Bạn không cần phải "ép" khách hàng mua thẻ', html: email2Content });
+      await new Promise(resolve => setTimeout(resolve, 1000));
       const r3 = await resend.emails.send({ from: fromEmail, to: email, subject: 'Cánh cửa trở thành PT chuyên nghiệp (Không ép sale, không body shaming) đã mở', html: email3Content });
       
       if (r1.error || r2.error || r3.error) {
