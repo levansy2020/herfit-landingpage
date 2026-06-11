@@ -106,7 +106,7 @@
     <section class="checkout-section">
         <div class="container checkout-container">
             <!-- Cột Form -->
-            <div class="checkout-form">
+            <div class="checkout-form" id="checkout-form">
             <h2>Thông tin thanh toán</h2>
             <p style="margin-bottom: 20px; color: #666;">Vui lòng điền thông tin để chúng tôi khởi tạo mã thanh toán tự động.</p>
             
@@ -164,6 +164,13 @@
                 return;
             }
 
+            const phoneRegex = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!phoneRegex.test(contact) && !emailRegex.test(contact)) {
+                alert('Vui lòng nhập Số điện thoại hợp lệ (10 số, bắt đầu bằng 0 hoặc +84) hoặc Email hợp lệ!');
+                return;
+            }
+
             // Tạo mã đơn hàng ngẫu nhiên
             const orderId = 'DH' + Math.floor(Math.random() * 10000);
             
@@ -180,6 +187,11 @@
             document.getElementById('txt-content').innerText = orderId;
             document.getElementById('txt-amount').innerText = parseInt(price).toLocaleString('vi-VN');
             document.getElementById('qr-section').classList.add('active');
+            
+            // Ẩn form sau khi hiển thị QR
+            document.getElementById('checkout-form').style.display = 'none';
+            document.querySelector('.checkout-container').style.gridTemplateColumns = '1fr';
+            document.querySelector('.checkout-container').style.maxWidth = '500px';
 
             // Simulate the backend API call to create pending order (This will be connected to real DB in Step 3/4)
             fetch('/api/create_order', {
