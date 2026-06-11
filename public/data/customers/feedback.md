@@ -1,0 +1,7 @@
+# Phản hồi từ học viên và khách hàng thực tế
+
+- **Đỗ Mai ly:** "Em cảm thấy là chị takecare em ok. Quan tâm, nhiệt tình chỉnh kĩ thuật rồi xem có vừa sức đồ hay không... kiểu tập ra tập nghỉ ra nghỉ 🤣 cứ đúng tiến độ đúng mục tiêu cho chị là chị ok hết. Với lại chị giãn cơ sau tập siêu đỉnh, giãn xong đỡ mỏi hẳn luôn. Mà quan trọng là e thấy đi tập thoải mái. Không nặng nề gì... Kiểu chị vui vẻ cùng tần số nên e thấy thoải mái. Chốt lại là tháng sau e tập tiếp, hết tháng e lại đki."
+
+- **Trà Ny Nguyễn:** "Tập với em mới có mấy tuần mà trộm vía ổn áp. Thấy người săn hơn, đỡ lỏng lẻo hơn và cũng khoẻ hơn đc chút, bớt ì :))). Dù nhiều buổi tập mệt muốn xỉu nhưng tập xong lại thấy đáng 🤣 Điều chị thích là em rất nhiệt tình và có tâm... Trước đó chị muốn đi tập gym mà ngại PT ở các phòng up sale, k có tâm. Trộm vía sao qua đây gặp PT có tâm quá trời 🤣🤣 Chị siêu siêu hài lòng và mong thời gian tới ce ta độ đc body siêu cháy 💪😆"
+
+- **Khách hàng của Coach Duyên (Gia Tộc Họ Song):** "Vốn là tạng người siêu dễ tăng cân và khó giảm cân nhưng chỉ mới 1 tháng rưỡi qua tay c Duyên thôi mà e đã giảm đc 3 kí r, quá đẳng cấp. Vs lại từ ngày tập gym e rèn đc thói quen ăn uống khoa học hơn nữa... C Duyên lúc cứng lúc mềm nên tạo cho e môi trường luyện tập vừa có đủ chút áp lực để e kỉ luật hơn vừa vui vẻ, thoải mái như có thêm người chị ruột đồng hành v. Nói chung là manifest giảm 10 kí r lúc đấy ms tha c Duyên kk"
