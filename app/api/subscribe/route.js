@@ -103,6 +103,8 @@ export async function POST(request) {
         html: email1Content 
       });
 
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       // Gửi Email 2 sau 2 ngày
       const r2 = await resend.emails.send({ 
         from: fromEmail, 
@@ -111,6 +113,8 @@ export async function POST(request) {
         html: email2Content,
         scheduledAt: day2.toISOString()
       });
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Gửi Email 3 sau 3 ngày
       const r3 = await resend.emails.send({ 
