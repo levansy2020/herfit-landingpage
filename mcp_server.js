@@ -303,6 +303,9 @@ app.get('/sse', async (req, res) => {
   res.on('close', () => {
     console.log('Client disconnected from /sse');
     clearInterval(heartbeatInterval);
+    if (transport && transport.res === res) {
+      transport = null;
+    }
   });
 
   transport = new SSEServerTransport('/message', res);
@@ -311,10 +314,17 @@ app.get('/sse', async (req, res) => {
 
 app.post('/message', async (req, res) => {
   console.log('Message received on /message:', JSON.stringify(req.body));
-  if (transport) {
-    await transport.handlePostMessage(req, res, req.body);
+  if (transport && transport._sseResponse) {
+    try {
+      await transport.handlePostMessage(req, res, req.body);
+    } catch (err) {
+      console.error('Error handling message:', err);
+      if (!res.headersSent) {
+        res.status(404).send('Session terminated');
+      }
+    }
   } else {
-    res.status(500).send('SSE connection not active');
+    res.status(404).send('Session terminated');
   }
 });
 
