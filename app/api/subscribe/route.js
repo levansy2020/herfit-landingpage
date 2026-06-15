@@ -75,7 +75,7 @@ export async function POST(request) {
 
     const { Resend } = require('resend');
     const resend = new Resend(resendApiKey);
-    const fromEmail = 'Lê Văn Sỹ <hi@levansy.com>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Lê Văn Sỹ <hi@levansy.com>';
 
     if (isTest) {
       // Chế độ test: Gửi cả 3 email ngay lập tức nhưng cách nhau 1 giây để tránh Rate Limit của Resend

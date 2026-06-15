@@ -147,7 +147,7 @@
             <div class="instruction">
                 <p><strong>Nội dung CK:</strong> <span id="txt-content" style="color: var(--accent-primary); font-weight: bold;"></span></p>
                 <p><strong>Số tiền:</strong> <span id="txt-amount" style="font-weight: bold;"></span> VNĐ</p>
-                <p>Ngân hàng: MBBank | Chủ TK: LE VAN SY</p>
+                <p>Ngân hàng: <span id="txt-bank">MBBank</span> | Chủ TK: <span id="txt-holder">LE VAN SY</span></p>
             </div>
 
             <div class="success-msg" id="success-msg">
@@ -158,7 +158,7 @@
     </section>
 
     <script>
-        document.getElementById('btn-generate').addEventListener('click', function() {
+        document.getElementById('btn-generate').addEventListener('click', async function() {
             const name = document.getElementById('cusName').value;
             const contact = document.getElementById('cusContact').value;
             const email = document.getElementById('cusEmail').value;
@@ -184,10 +184,23 @@
             // Tạo mã đơn hàng ngẫu nhiên
             const orderId = 'DH' + Math.floor(Math.random() * 10000);
             
-            // Thông tin ngân hàng của User
-            const bank = 'MBBank';
-            const acc = '0987873729';
-            const holder = 'LE VAN SY';
+            // Thông tin ngân hàng mặc định của User
+            let bank = 'MBBank';
+            let acc = '0987873729';
+            let holder = 'LE VAN SY';
+
+            // Tải thông tin tài khoản ngân hàng từ API động
+            try {
+                const configRes = await fetch('/api/payment-info');
+                if (configRes.ok) {
+                    const config = await configRes.json();
+                    if (config.bank) bank = config.bank;
+                    if (config.acc) acc = config.acc;
+                    if (config.holder) holder = config.holder;
+                }
+            } catch (err) {
+                console.warn('Không thể tải thông tin thanh toán động, sử dụng cấu hình mặc định:', err);
+            }
             
             // Xây dựng link VietQR từ SePay
             const qrUrl = `https://qr.sepay.vn/img?acc=${acc}&bank=${bank}&amount=${price}&des=${orderId}&template=compact&showinfo=true&holder=${encodeURIComponent(holder)}`;
@@ -196,6 +209,8 @@
             document.getElementById('qr-image').src = qrUrl;
             document.getElementById('txt-content').innerText = orderId;
             document.getElementById('txt-amount').innerText = parseInt(price).toLocaleString('vi-VN');
+            document.getElementById('txt-bank').innerText = bank;
+            document.getElementById('txt-holder').innerText = holder;
             document.getElementById('qr-section').classList.add('active');
             
             // Ẩn form sau khi hiển thị QR

@@ -2,9 +2,23 @@ import sqlite3
 import urllib.request
 import json
 import ssl
+import os
 
-SUPABASE_URL = "https://xucsxflvcqqklzakatlt.supabase.co"
-SUPABASE_KEY = "sb_publishable_cPC846G2fkf3SoMUNU1JnA_d7RKUCE1"
+def load_dotenv(env_path='.env'):
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, val = line.split('=', 1)
+                    os.environ[key.strip()] = val.strip().strip('"').strip("'")
+
+# Load .env files
+load_dotenv('.env')
+load_dotenv('.env.local')
+
+SUPABASE_URL = os.environ.get("NEXT_PUBLIC_SUPABASE_URL", "https://xucsxflvcqqklzakatlt.supabase.co")
+SUPABASE_KEY = os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY", "sb_publishable_cPC846G2fkf3SoMUNU1JnA_d7RKUCE1")
 
 headers = {
     "apikey": SUPABASE_KEY,

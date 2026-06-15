@@ -1,5 +1,19 @@
 from flask import Flask, request, jsonify
 import sqlite3
+import os
+
+def load_dotenv(env_path='.env'):
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, val = line.split('=', 1)
+                    os.environ[key.strip()] = val.strip().strip('"').strip("'")
+
+# Load .env files
+load_dotenv('.env')
+load_dotenv('.env.local')
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 
@@ -21,6 +35,17 @@ def admin():
     return app.send_static_file('admin.html')
 
 # -- API ENDPOINTS --
+@app.route('/api/payment-info')
+def payment_info():
+    bank = os.environ.get('NEXT_PUBLIC_BANK_NAME', 'MBBank')
+    acc = os.environ.get('NEXT_PUBLIC_BANK_ACC', '0987873729')
+    holder = os.environ.get('NEXT_PUBLIC_BANK_HOLDER', 'LE VAN SY')
+    return jsonify({
+        'bank': bank,
+        'acc': acc,
+        'holder': holder
+    })
+
 @app.route('/api/products', methods=['GET', 'POST'])
 def manage_products():
     conn = get_db_connection()
