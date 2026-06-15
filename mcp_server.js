@@ -2,6 +2,10 @@ const express = require('express');
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
 const { SSEServerTransport } = require('@modelcontextprotocol/sdk/server/sse.js');
 const { CallToolRequestSchema, ListToolsRequestSchema } = require('@modelcontextprotocol/sdk/types.js');
+
+// Add global WebSocket polyfill for Supabase under Node.js < 22
+global.WebSocket = require('ws');
+
 const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
 const fs = require('fs');
