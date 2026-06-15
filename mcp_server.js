@@ -281,11 +281,16 @@ let transport = null;
 
 app.get('/sse', async (req, res) => {
   console.log('Client connected to /sse');
-  try {
-    await server.close();
-  } catch (e) {
-    // Ignore error if not connected
+  if (transport) {
+    try {
+      await transport.close();
+    } catch (e) {
+      // Ignore error
+    }
   }
+  // Force reset server transport reference to prevent "Already connected" error
+  server._transport = undefined;
+
   transport = new SSEServerTransport('/message', res);
   await server.connect(transport);
 });
@@ -293,7 +298,7 @@ app.get('/sse', async (req, res) => {
 app.post('/message', async (req, res) => {
   console.log('Message received on /message:', JSON.stringify(req.body));
   if (transport) {
-    await transport.handlePostMessage(req, res);
+    await transport.handlePostMessage(req, res, req.body);
   } else {
     res.status(500).send('SSE connection not active');
   }
