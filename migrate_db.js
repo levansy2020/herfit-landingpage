@@ -1,3 +1,4 @@
+global.WebSocket = require('ws');
 const sqlite3 = require('sqlite3').verbose();
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
