@@ -291,6 +291,20 @@ app.get('/sse', async (req, res) => {
   // Force reset server transport reference to prevent "Already connected" error
   server._transport = undefined;
 
+  // Set up keepalive heartbeat interval (every 15 seconds) to prevent timeouts
+  const heartbeatInterval = setInterval(() => {
+    try {
+      res.write(':\n\n');
+    } catch (err) {
+      // Ignore write errors (will be cleaned up on close)
+    }
+  }, 15000);
+
+  res.on('close', () => {
+    console.log('Client disconnected from /sse');
+    clearInterval(heartbeatInterval);
+  });
+
   transport = new SSEServerTransport('/message', res);
   await server.connect(transport);
 });
