@@ -2,11 +2,7 @@ const express = require('express');
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
 const { SSEServerTransport } = require('@modelcontextprotocol/sdk/server/sse.js');
 const { CallToolRequestSchema, ListToolsRequestSchema } = require('@modelcontextprotocol/sdk/types.js');
-
-// Add global WebSocket polyfill for Supabase under Node.js < 22
-global.WebSocket = require('ws');
-
-const { createClient } = require('@supabase/supabase-js');
+const sqlite3 = require('sqlite3').verbose();
 const { Resend } = require('resend');
 const fs = require('fs');
 const path = require('path');
@@ -18,12 +14,71 @@ if (fs.existsSync('.env.local')) {
   require('dotenv').config();
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// SQLite database connection
+const dbPath = process.env.SQLITE_DB_PATH || path.join(__dirname, 'brain.db');
+console.log(`Using SQLite Database at: ${dbPath}`);
+const db = new sqlite3.Database(dbPath);
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Helper functions for SQLite using Promises
+const dbAll = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows || []);
+    });
+  });
+};
+
+const dbGet = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+};
+
+const dbRun = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
+    });
+  });
+};
+
+// Check if customer table has email column
+async function checkEmailColumn() {
+  try {
+    const columns = await dbAll("PRAGMA table_info(customers)");
+    return columns.some(col => col.name === 'email');
+  } catch (e) {
+    console.error("Error checking columns:", e.message);
+    return false;
+  }
+}
+
+// Log helper
+function logCall(functionName, args) {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] [MCP CALL] ${functionName} with args:`, JSON.stringify(args));
+}
+
+// Date helper for SQLite YYYY-MM-DD HH:MM:SS parsing
+function parseSQLiteDate(dateStr) {
+  if (!dateStr) return new Date(0);
+  const parts = dateStr.split(/[- :]/);
+  if (parts.length >= 6) {
+    return new Date(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
+  } else if (parts.length >= 3) {
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+  return new Date(dateStr);
+}
+
+// Initialize Resend
+const resendApiKey = process.env.RESEND_API_KEY || '';
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 const server = new Server(
   {
@@ -43,7 +98,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'get_sales_report',
-        description: 'Báo cáo doanh thu thực tế và số lượng đơn hàng thành công/đang chờ từ Supabase.',
+        description: 'Báo cáo doanh thu thực tế và số lượng đơn hàng từ SQLite database.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -58,13 +113,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'confirm_payment',
-        description: 'Xác nhận thanh toán thủ công cho một đơn hàng bằng mã đơn hàng và tự động gửi email kích hoạt qua Resend.',
+        description: 'Xác nhận thanh toán thủ công cho một đơn hàng bằng mã đơn hàng và gửi email qua Resend.',
         inputSchema: {
           type: 'object',
           properties: {
             order_code: {
               type: 'string',
               description: 'Mã đơn hàng cần xác nhận (ví dụ: DH1234)'
+            },
+            payment_method: {
+              type: 'string',
+              description: 'Phương thức thanh toán (ví dụ: Manual Transfer)'
             }
           },
           required: ['order_code']
@@ -91,10 +150,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 // Register call tool handler
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
+  logCall(name, args);
 
   try {
     if (name === 'get_sales_report') {
       const { date_range } = args;
+      if (!['today', 'yesterday', 'this_week', 'this_month'].includes(date_range)) {
+        return {
+          content: [{ type: 'text', text: `Lỗi: date_range không hợp lệ. Chỉ chấp nhận: today, yesterday, this_week, this_month.` }],
+          isError: true
+        };
+      }
+
       const now = new Date();
       let start, end;
 
@@ -106,40 +173,64 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       } else if (date_range === 'this_week') {
         const day = now.getDay() || 7;
         start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day + 1);
+        start.setHours(0, 0, 0, 0);
       } else if (date_range === 'this_month') {
         start = new Date(now.getFullYear(), now.getMonth(), 1);
       }
 
-      let query = supabase.from('orders')
-        .select('*, customers(name, email), products(name)')
-        .gte('order_date', start.toISOString());
-        
-      if (end) {
-        query = query.lte('order_date', end.toISOString());
-      }
+      const queryStr = `
+        SELECT o.order_code, o.amount, o.status, o.order_date, c.name as customer_name, p.name as product_name
+        FROM orders o
+        LEFT JOIN customers c ON o.customer_id = c.id
+        LEFT JOIN products p ON o.product_id = p.id
+        ORDER BY o.order_date DESC
+      `;
 
-      const { data: orders, error } = await query;
-      if (error) throw new Error(`Supabase query error: ${error.message}`);
+      const orders = await dbAll(queryStr);
 
-      if (!orders || orders.length === 0) {
+      const filteredOrders = orders.filter(o => {
+        const oDate = parseSQLiteDate(o.order_date);
+        if (start && oDate < start) return false;
+        if (end && oDate > end) return false;
+        return true;
+      });
+
+      if (filteredOrders.length === 0) {
         return {
           content: [{ type: 'text', text: `Không có đơn hàng nào trong khoảng thời gian: ${date_range}.` }]
         };
       }
 
-      const successOrders = orders.filter(o => o.status === 'success');
-      const pendingOrders = orders.filter(o => o.status === 'pending');
+      const successOrders = filteredOrders.filter(o => o.status === 'success');
+      const pendingOrders = filteredOrders.filter(o => o.status === 'pending');
       const totalRevenue = successOrders.reduce((sum, o) => sum + o.amount, 0);
+
+      // Best seller product in this range
+      const productCounts = {};
+      successOrders.forEach(o => {
+        if (o.product_name) {
+          productCounts[o.product_name] = (productCounts[o.product_name] || 0) + 1;
+        }
+      });
+      let bestSeller = 'Không có';
+      let maxCount = 0;
+      for (const prod in productCounts) {
+        if (productCounts[prod] > maxCount) {
+          maxCount = productCounts[prod];
+          bestSeller = prod;
+        }
+      }
 
       let textResult = `### BÁO CÁO DOANH THU & ĐƠN HÀNG (${date_range.toUpperCase()})\n\n`;
       textResult += `* **Tổng doanh thu thực tế:** ${new Intl.NumberFormat('vi-VN').format(totalRevenue)} đ\n`;
       textResult += `* **Số đơn hàng đã thanh toán (Success):** ${successOrders.length}\n`;
-      textResult += `* **Số đơn hàng đang chờ (Pending):** ${pendingOrders.length}\n\n`;
+      textResult += `* **Số đơn hàng đang chờ (Pending):** ${pendingOrders.length}\n`;
+      textResult += `* **Khóa học bán chạy nhất:** ${bestSeller} (${maxCount} lượt mua)\n\n`;
 
       textResult += `#### Chi tiết các đơn hàng:\n`;
-      orders.forEach(o => {
-        const customerName = o.customers ? o.customers.name : 'Ẩn danh';
-        const productName = o.products ? o.products.name : 'Khóa học';
+      filteredOrders.forEach(o => {
+        const customerName = o.customer_name || 'Ẩn danh';
+        const productName = o.product_name || 'Khóa học';
         textResult += `- **${o.order_code}** | ${customerName} | ${productName} | **${new Intl.NumberFormat('vi-VN').format(o.amount)} đ** | [${o.status.toUpperCase()}]\n`;
       });
 
@@ -148,16 +239,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
 
     } else if (name === 'confirm_payment') {
-      const { order_code } = args;
+      const { order_code, payment_method = 'Manual Transfer' } = args;
+      if (!order_code) {
+        return {
+          content: [{ type: 'text', text: `Lỗi: Thiếu mã đơn hàng order_code.` }],
+          isError: true
+        };
+      }
 
-      // 1. Check order details
-      const { data: order, error } = await supabase.from('orders')
-        .select('*, customers(email, name)')
-        .eq('order_code', order_code)
-        .single();
+      const hasEmail = await checkEmailColumn();
+      const selectQuery = hasEmail
+        ? `SELECT o.order_code, o.amount, o.status, c.name as customer_name, c.phone as customer_phone, c.email as customer_email
+           FROM orders o
+           LEFT JOIN customers c ON o.customer_id = c.id
+           WHERE o.order_code = ?`
+        : `SELECT o.order_code, o.amount, o.status, c.name as customer_name, c.phone as customer_phone
+           FROM orders o
+           LEFT JOIN customers c ON o.customer_id = c.id
+           WHERE o.order_code = ?`;
 
-      if (error || !order) {
-        throw new Error(`Không tìm thấy đơn hàng có mã: ${order_code}`);
+      const order = await dbGet(selectQuery, [order_code]);
+
+      if (!order) {
+        return {
+          content: [{ type: 'text', text: `Lỗi: Không tìm thấy đơn hàng có mã: ${order_code}` }],
+          isError: true
+        };
       }
 
       if (order.status === 'success') {
@@ -166,28 +273,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      // 2. Update status to success
-      const { error: updateError } = await supabase.from('orders')
-        .update({ status: 'success' })
-        .eq('order_code', order_code);
-
-      if (updateError) {
-        throw new Error(`Lỗi cập nhật trạng thái đơn hàng: ${updateError.message}`);
-      }
+      // Update order status to success
+      await dbRun(`UPDATE orders SET status = 'success' WHERE order_code = ?`, [order_code]);
 
       let emailStatus = 'Không có email khách hàng để gửi thông báo.';
-      const customerEmail = order.customers?.email;
-      const customerName = order.customers?.name || 'bạn';
+      const customerEmail = hasEmail ? order.customer_email : null;
+      const customerName = order.customer_name || 'bạn';
 
-      // 3. Send email confirmation via Resend
-      if (customerEmail) {
-        const fromEmail = process.env.RESEND_FROM_EMAIL || 'Lê Văn Sỹ <hi@levansy.com>';
+      if (customerEmail && resend) {
+        const fromEmail = process.env.RESEND_FROM_EMAIL || 'Lê Văn Sỹ <hi@academy.levansy.com>';
         const htmlContent = `
           <p>Chào ${customerName},</p>
           <p>Cảm ơn bạn đã thanh toán thành công khóa học tại HerFit Wellness (Duyệt thủ công qua Telegram).</p>
           <ul>
             <li><strong>Mã đơn hàng:</strong> ${order_code}</li>
             <li><strong>Số tiền:</strong> ${new Intl.NumberFormat('vi-VN').format(order.amount)} đ</li>
+            <li><strong>Phương thức:</strong> ${payment_method}</li>
             <li><strong>Trạng thái:</strong> THÀNH CÔNG</li>
           </ul>
           <p>Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để hướng dẫn các bước tiếp theo.</p>
@@ -210,26 +311,37 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         } catch (e) {
           emailStatus = `Lỗi hệ thống khi gửi email: ${e.message}`;
         }
+      } else if (!resend) {
+        emailStatus = 'Chưa cấu hình RESEND_API_KEY hoặc không khởi tạo được Resend.';
       }
 
       return {
         content: [{
           type: 'text',
-          text: `🎉 Đã kích hoạt thanh toán thành công cho đơn hàng **${order_code}** (Số tiền: ${new Intl.NumberFormat('vi-VN').format(order.amount)} đ).\n👉 **Trạng thái Email:** ${emailStatus}`
+          text: `🎉 Đã kích hoạt thanh toán thành công cho đơn hàng **${order_code}** (Số tiền: ${new Intl.NumberFormat('vi-VN').format(order.amount)} đ, Phương thức: ${payment_method}).\n👉 **Trạng thái Email:** ${emailStatus}`
         }]
       };
 
     } else if (name === 'search_customer') {
       const { query } = args;
+      if (!query) {
+        return {
+          content: [{ type: 'text', text: `Lỗi: Từ khóa tìm kiếm query không được để trống.` }],
+          isError: true
+        };
+      }
 
-      // Search customer by name, email, or phone
-      const { data: customers, error } = await supabase.from('customers')
-        .select('*')
-        .or(`name.ilike.%${query}%,phone.ilike.%${query}%,email.ilike.%${query}%`);
+      const hasEmail = await checkEmailColumn();
+      let selectCustomersSql = `SELECT * FROM customers WHERE name LIKE ? OR phone LIKE ? OR zalo LIKE ?`;
+      const params = [`%${query}%`, `%${query}%`, `%${query}%`];
+      if (hasEmail) {
+        selectCustomersSql += ` OR email LIKE ?`;
+        params.push(`%${query}%`);
+      }
 
-      if (error) throw new Error(`Supabase query error: ${error.message}`);
+      const customers = await dbAll(selectCustomersSql, params);
 
-      if (!customers || customers.length === 0) {
+      if (customers.length === 0) {
         return {
           content: [{ type: 'text', text: `Không tìm thấy khách hàng nào khớp với từ khóa: "${query}"` }]
         };
@@ -239,20 +351,26 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       for (const c of customers) {
         textResult += `👤 **${c.name}**\n`;
-        textResult += `- **SĐT:** ${c.phone}\n`;
-        textResult += `- **Email:** ${c.email || 'Không có'}\n`;
+        textResult += `- **SĐT:** ${c.phone || 'Không có'}\n`;
+        if (hasEmail) {
+          textResult += `- **Email:** ${c.email || 'Không có'}\n`;
+        }
         textResult += `- **Zalo:** ${c.zalo || 'Không có'}\n`;
-        textResult += `- **Ngày đăng ký:** ${new Date(c.register_date).toLocaleDateString('vi-VN')}\n`;
+        textResult += `- **Ngày đăng ký:** ${c.register_date || 'Không có'}\n`;
 
         // Fetch customer orders
-        const { data: orders } = await supabase.from('orders')
-          .select('*, products(name)')
-          .eq('customer_id', c.id);
+        const orders = await dbAll(`
+          SELECT o.order_code, o.amount, o.status, o.order_date, p.name as product_name
+          FROM orders o
+          LEFT JOIN products p ON o.product_id = p.id
+          WHERE o.customer_id = ?
+          ORDER BY o.order_date DESC
+        `, [c.id]);
 
-        if (orders && orders.length > 0) {
+        if (orders.length > 0) {
           textResult += `- **Lịch sử mua hàng (${orders.length} đơn):**\n`;
           orders.forEach(o => {
-            const productName = o.products ? o.products.name : 'Khóa học';
+            const productName = o.product_name || 'Khóa học';
             textResult += `  * **${o.order_code}** | ${productName} | **${new Intl.NumberFormat('vi-VN').format(o.amount)} đ** | [${o.status.toUpperCase()}]\n`;
           });
         } else {
@@ -288,15 +406,13 @@ app.get('/sse', async (req, res) => {
       // Ignore error
     }
   }
-  // Force reset server transport reference to prevent "Already connected" error
   server._transport = undefined;
 
-  // Set up keepalive heartbeat interval (every 15 seconds) to prevent timeouts
   const heartbeatInterval = setInterval(() => {
     try {
       res.write(':\n\n');
     } catch (err) {
-      // Ignore write errors (will be cleaned up on close)
+      // Ignore
     }
   }, 15000);
 
@@ -329,6 +445,7 @@ app.post('/message', async (req, res) => {
 });
 
 const PORT = process.env.MCP_PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`HerFit MCP Server listening on port ${PORT}`);
+// Listen strictly on localhost (127.0.0.1) as requested
+app.listen(PORT, '127.0.0.1', () => {
+  console.log(`HerFit MCP Server listening on 127.0.0.1:${PORT}`);
 });
