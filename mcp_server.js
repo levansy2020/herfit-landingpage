@@ -281,6 +281,11 @@ let transport = null;
 
 app.get('/sse', async (req, res) => {
   console.log('Client connected to /sse');
+  try {
+    await server.close();
+  } catch (e) {
+    // Ignore error if not connected
+  }
   transport = new SSEServerTransport('/message', res);
   await server.connect(transport);
 });
