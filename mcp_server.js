@@ -1,7 +1,8 @@
 const express = require('express');
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
-const { SSEServerTransport } = require('@modelcontextprotocol/sdk/server/sse.js');
-const { CallToolRequestSchema, ListToolsRequestSchema } = require('@modelcontextprotocol/sdk/types.js');
+const { StreamableHTTPServerTransport } = require('@modelcontextprotocol/sdk/server/streamableHttp.js');
+const { isInitializeRequest, CallToolRequestSchema, ListToolsRequestSchema } = require('@modelcontextprotocol/sdk/types.js');
+const { randomUUID } = require('crypto');
 
 // Add global WebSocket polyfill for Supabase under Node.js < 22
 global.WebSocket = require('ws');
@@ -34,17 +35,18 @@ function logCall(functionName, args) {
   console.log(`[${timestamp}] [MCP CALL] ${functionName} with args:`, JSON.stringify(args));
 }
 
-const server = new Server(
-  {
-    name: "herfit-mcp",
-    version: "1.0.0"
-  },
-  {
-    capabilities: {
-      tools: {}
+function createMcpServer() {
+  const server = new Server(
+    {
+      name: "herfit-mcp",
+      version: "1.0.0"
+    },
+    {
+      capabilities: {
+        tools: {}
+      }
     }
-  }
-);
+  );
 
 // Register list tools handler
 server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -329,58 +331,114 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       isError: true
     };
   }
-});
+  });
 
-// Setup Express with SSE
+  return server;
+}
+
+// Setup Express for Streamable HTTP
 const app = express();
 app.use(express.json());
 
-let transport = null;
+// Map to store transports by session ID
+const transports = {};
 
-app.get('/sse', async (req, res) => {
-  console.log('Client connected to /sse');
-  if (transport) {
-    try {
-      await transport.close();
-    } catch (e) {
-      // Ignore error
+// MCP POST endpoint
+app.post('/mcp', async (req, res) => {
+  const sessionId = req.headers['mcp-session-id'];
+  if (sessionId) {
+    console.log(`Received MCP request for session: ${sessionId}`);
+  } else {
+    console.log('Request body:', JSON.stringify(req.body));
+  }
+
+  try {
+    let transport;
+    if (sessionId && transports[sessionId]) {
+      // Reuse existing transport
+      transport = transports[sessionId];
+    } else if (!sessionId && isInitializeRequest(req.body)) {
+      // New initialization request
+      transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => randomUUID(),
+        onsessioninitialized: (sid) => {
+          console.log(`Session initialized with ID: ${sid}`);
+          transports[sid] = transport;
+        }
+      });
+
+      // Set up onclose handler to clean up transport when closed
+      transport.onclose = () => {
+        const sid = transport.sessionId;
+        if (sid && transports[sid]) {
+          console.log(`Transport closed for session ${sid}, removing from transports map`);
+          delete transports[sid];
+        }
+      };
+
+      // Connect the transport to the MCP server BEFORE handling the request
+      const connServer = createMcpServer();
+      await connServer.connect(transport);
+      await transport.handleRequest(req, res, req.body);
+      return; // Already handled
+    } else {
+      // Invalid request - no session ID or not initialization request
+      res.status(400).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32000,
+          message: 'Bad Request: No valid session ID provided'
+        },
+        id: null
+      });
+      return;
+    }
+
+    // Handle the request with existing transport
+    await transport.handleRequest(req, res, req.body);
+  } catch (error) {
+    console.error('Error handling MCP request:', error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        jsonrpc: '2.0',
+        error: {
+          code: -32603,
+          message: 'Internal server error'
+        },
+        id: null
+      });
     }
   }
-  server._transport = undefined;
-
-  const heartbeatInterval = setInterval(() => {
-    try {
-      res.write(':\n\n');
-    } catch (err) {
-      // Ignore
-    }
-  }, 15000);
-
-  res.on('close', () => {
-    console.log('Client disconnected from /sse');
-    clearInterval(heartbeatInterval);
-    if (transport && transport.res === res) {
-      transport = null;
-    }
-  });
-
-  transport = new SSEServerTransport('/message', res);
-  await server.connect(transport);
 });
 
-app.post('/message', async (req, res) => {
-  console.log('Message received on /message:', JSON.stringify(req.body));
-  if (transport && transport._sseResponse) {
-    try {
-      await transport.handlePostMessage(req, res, req.body);
-    } catch (err) {
-      console.error('Error handling message:', err);
-      if (!res.headersSent) {
-        res.status(404).send('Session terminated');
-      }
+// MCP GET endpoint (SSE stream establishment)
+app.get('/mcp', async (req, res) => {
+  const sessionId = req.headers['mcp-session-id'] || req.query['sessionId'] || req.query['session_id'];
+  if (!sessionId || !transports[sessionId]) {
+    res.status(400).send('Invalid or missing session ID');
+    return;
+  }
+  console.log(`Establishing SSE stream for session ${sessionId}`);
+  const transport = transports[sessionId];
+  await transport.handleRequest(req, res);
+});
+
+// MCP DELETE endpoint (session termination)
+app.delete('/mcp', async (req, res) => {
+  const sessionId = req.headers['mcp-session-id'] || req.query['sessionId'] || req.query['session_id'];
+  if (!sessionId || !transports[sessionId]) {
+    res.status(400).send('Invalid or missing session ID');
+    return;
+  }
+  console.log(`Received session termination request for session ${sessionId}`);
+  try {
+    const transport = transports[sessionId];
+    await transport.handleRequest(req, res);
+  } catch (error) {
+    console.error('Error handling session termination:', error);
+    if (!res.headersSent) {
+      res.status(500).send('Error processing session termination');
     }
-  } else {
-    res.status(404).send('Session terminated');
   }
 });
 
@@ -389,4 +447,20 @@ const PORT = process.env.MCP_PORT || 3001;
 // while public access is fully blocked by VPS firewall (UFW).
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`HerFit MCP Server listening on 0.0.0.0:${PORT}`);
+});
+
+// Handle server shutdown
+process.on('SIGINT', async () => {
+  console.log('Shutting down server...');
+  for (const sessionId in transports) {
+    try {
+      console.log(`Closing transport for session ${sessionId}`);
+      await transports[sessionId].close();
+      delete transports[sessionId];
+    } catch (error) {
+      console.error(`Error closing transport for session ${sessionId}:`, error);
+    }
+  }
+  console.log('Server shutdown complete');
+  process.exit(0);
 });
