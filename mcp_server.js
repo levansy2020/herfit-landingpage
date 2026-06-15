@@ -291,7 +291,7 @@ app.get('/sse', async (req, res) => {
 });
 
 app.post('/message', async (req, res) => {
-  console.log('Message received on /message');
+  console.log('Message received on /message:', JSON.stringify(req.body));
   if (transport) {
     await transport.handlePostMessage(req, res);
   } else {
