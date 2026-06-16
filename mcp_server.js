@@ -106,6 +106,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           type: 'object',
           properties: {}
         }
+      },
+      {
+        name: 'get_morning_report',
+        description: 'Tổng hợp số lượng đơn hàng thành công, tổng doanh thu và số lượng khách đăng ký mới trong 24 giờ qua.',
+        inputSchema: {
+          type: 'object',
+          properties: {}
+        }
       }
     ]
   };
@@ -416,6 +424,72 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       if (updateError) {
         console.error('Lỗi cập nhật trạng thái đã thông báo:', updateError.message);
       }
+
+      return {
+        content: [
+          { type: 'text', text: textResult }
+        ]
+      };
+    } else if (name === 'get_morning_report') {
+      const now = new Date();
+      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+      // 1. Fetch successful orders in last 24 hours
+      const { data: orders, error: ordersError } = await supabase.from('orders')
+        .select('*')
+        .eq('status', 'success')
+        .gte('order_date', twentyFourHoursAgo.toISOString())
+        .lte('order_date', now.toISOString());
+
+      if (ordersError) {
+        throw new Error(`Lỗi truy vấn đơn hàng 24h qua: ${ordersError.message}`);
+      }
+
+      // 2. Fetch new customers in last 24 hours
+      const { data: customers, error: customersError } = await supabase.from('customers')
+        .select('*')
+        .gte('register_date', twentyFourHoursAgo.toISOString())
+        .lte('register_date', now.toISOString());
+
+      if (customersError) {
+        throw new Error(`Lỗi truy vấn khách hàng mới 24h qua: ${customersError.message}`);
+      }
+
+      const successCount = orders ? orders.length : 0;
+      const totalRevenue = orders ? orders.reduce((sum, o) => sum + o.amount, 0) : 0;
+      const newCustomersCount = customers ? customers.length : 0;
+
+      // 3. Format revenue (e.g. 1.200.000 đ -> 1,2tr)
+      let formattedRevenue = '0đ';
+      if (totalRevenue > 0) {
+        if (totalRevenue >= 1000000) {
+          const rawMillions = totalRevenue / 1000000;
+          if (Number.isInteger(rawMillions)) {
+            formattedRevenue = `${rawMillions}tr`;
+          } else {
+            formattedRevenue = `${rawMillions.toFixed(1).replace('.', ',')}tr`;
+          }
+        } else {
+          formattedRevenue = `${new Intl.NumberFormat('vi-VN').format(totalRevenue)}đ`;
+        }
+      }
+
+      // Vietnam local hour for display
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Ho_Chi_Minh',
+        hour: 'numeric',
+        hour12: false
+      });
+      const hour = parseInt(formatter.format(now), 10);
+
+      let timeOfDay = 'sáng';
+      if (hour >= 12 && hour < 18) {
+        timeOfDay = 'chiều';
+      } else if (hour >= 18 || hour < 4) {
+        timeOfDay = 'tối';
+      }
+
+      const textResult = `${hour}h ${timeOfDay}. 24h qua chốt ${successCount} đơn, ${formattedRevenue}. ${newCustomersCount} khách mới điền form.`;
 
       return {
         content: [
