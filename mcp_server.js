@@ -98,6 +98,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
           required: ['query']
         }
+      },
+      {
+        name: 'get_new_leads',
+        description: 'Lấy danh sách các khách hàng mới đăng ký qua form/waitlist chưa được thông báo và tự động đánh dấu đã thông báo.',
+        inputSchema: {
+          type: 'object',
+          properties: {}
+        }
       }
     ]
   };
@@ -323,6 +331,96 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       return {
         content: [{ type: 'text', text: textResult }]
+      };
+
+    } else if (name === 'get_new_leads') {
+      // 1. Fetch new leads
+      const { data: leads, error: fetchError } = await supabase.from('customers')
+        .select('*')
+        .or('notified.eq.false,notified.is.null')
+        .order('register_date', { ascending: true });
+
+      if (fetchError) {
+        throw new Error(`Lỗi truy vấn khách hàng mới: ${fetchError.message}`);
+      }
+
+      if (!leads || leads.length === 0) {
+        return {
+          content: [{ type: 'text', text: 'Không có khách hàng mới đăng ký chưa thông báo.' }]
+        };
+      }
+
+      // 2. Process leads and calculate daily indices
+      const maskPhone = (phone) => {
+        if (!phone) return 'Không có';
+        if (phone.length <= 3) return 'xxx';
+        return phone.slice(0, -3) + 'xxx';
+      };
+
+      const getPronoun = (fullName) => {
+        const nameLower = fullName.toLowerCase();
+        if (nameLower.includes(' thị ') || nameLower.endsWith(' thị')) return 'Chị';
+        if (nameLower.includes(' văn ') || nameLower.includes(' đức ') || nameLower.includes(' minh ') || nameLower.includes(' tuấn ')) return 'Anh';
+        return 'Khách hàng';
+      };
+
+      let textResult = `🔔 **THÔNG BÁO KHÁCH HÀNG MỚI ĐĂNG KÝ**\n\n`;
+      const processedLeads = [];
+
+      for (const lead of leads) {
+        const pronoun = getPronoun(lead.name);
+        const lastName = lead.name.split(' ').pop();
+        const displayName = pronoun === 'Khách hàng' ? lead.name : `${pronoun} ${lastName}`;
+        const maskedPhone = maskPhone(lead.phone);
+        
+        let indexToday = 1;
+        try {
+          const regDate = new Date(lead.register_date || new Date());
+          // Chuyển sang múi giờ Việt Nam (+7) để tính ngày
+          const vnTime = new Date(regDate.getTime() + 7 * 60 * 60 * 1000);
+          const yyyy = vnTime.getUTCFullYear();
+          const mm = String(vnTime.getUTCMonth() + 1).padStart(2, '0');
+          const dd = String(vnTime.getUTCDate()).padStart(2, '0');
+          const startOfDay = new Date(`${yyyy}-${mm}-${dd}T00:00:00+07:00`).toISOString();
+          const leadTime = regDate.toISOString();
+
+          const { count, error: countError } = await supabase.from('customers')
+            .select('*', { count: 'exact', head: true })
+            .gte('register_date', startOfDay)
+            .lte('register_date', leadTime);
+
+          if (!countError && count !== null) {
+            indexToday = count;
+          }
+        } catch (e) {
+          console.error('Lỗi tính số thứ tự trong ngày:', e);
+        }
+
+        textResult += `👉 ${displayName} vừa điền form, SĐT ${maskedPhone}. Khách thứ ${indexToday} hôm nay.\n`;
+        processedLeads.push({
+          id: lead.id,
+          name: lead.name,
+          phone: lead.phone,
+          email: lead.email,
+          register_date: lead.register_date,
+          index_today: indexToday
+        });
+      }
+
+      // 3. Mark as notified
+      const leadIds = leads.map(l => l.id);
+      const { error: updateError } = await supabase.from('customers')
+        .update({ notified: true })
+        .in('id', leadIds);
+
+      if (updateError) {
+        console.error('Lỗi cập nhật trạng thái đã thông báo:', updateError.message);
+      }
+
+      return {
+        content: [
+          { type: 'text', text: textResult }
+        ]
       };
     }
   } catch (err) {
