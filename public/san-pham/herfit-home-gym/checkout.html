@@ -33,7 +33,7 @@
 <header class="navbar">
   <div class="container nav-content">
     <a href="/" class="logo-link"><img src="/logo.png" alt="HerFit" class="logo-img" style="height:56px;"></a>
-    <a href="index.html" class="btn btn-primary" style="padding:10px 24px;">Quay lại sản phẩm</a>
+    <a href="/san-pham/herfit-home-gym" class="btn btn-primary" style="padding:10px 24px;">Quay lại sản phẩm</a>
   </div>
 </header>
 
@@ -122,7 +122,7 @@
         const data = await res.json();
         if (data.status === 'success') {
           clearInterval(interval);
-          location.href = 'cam-on.html?order=' + orderId;
+          location.href = '/san-pham/herfit-home-gym/cam-on?order=' + orderId;
         }
       } catch (e) {}
     }, 3000);

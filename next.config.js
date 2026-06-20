@@ -14,6 +14,18 @@ const nextConfig = {
         source: '/checkout',
         destination: '/checkout.html',
       },
+      {
+        source: '/san-pham/herfit-home-gym',
+        destination: '/san-pham/herfit-home-gym/index.html',
+      },
+      {
+        source: '/san-pham/herfit-home-gym/checkout',
+        destination: '/san-pham/herfit-home-gym/checkout.html',
+      },
+      {
+        source: '/san-pham/herfit-home-gym/cam-on',
+        destination: '/san-pham/herfit-home-gym/cam-on.html',
+      },
     ]
   },
 }
