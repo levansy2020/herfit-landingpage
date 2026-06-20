@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thanh toán — HerFit Home &amp; Gym</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body{background:var(--bg-section);}
+  .co{padding:120px 0 80px;}
+  .co-box{max-width:920px;margin:0 auto;background:#fff;padding:40px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.06);display:grid;grid-template-columns:1fr 1fr;gap:36px;}
+  @media(max-width:768px){.co-box{grid-template-columns:1fr;}}
+  .prod{background:#fff5f8;border-radius:12px;padding:22px;}
+  .prod h3{font-size:1.1rem;color:var(--text-primary);font-family:var(--font-body);font-weight:700;}
+  .prod .p{color:var(--accent-primary);font-family:var(--font-heading);font-weight:800;font-size:1.8rem;margin-top:8px;}
+  .form-group{margin-bottom:18px;}
+  .form-group label{display:block;margin-bottom:7px;font-weight:600;font-size:.92rem;}
+  .form-group input{width:100%;padding:12px;border:1px solid #e2c4d0;border-radius:8px;font-family:'Inter',sans-serif;}
+  .btn-pay{background:var(--accent-primary);color:#fff;border:none;padding:15px;width:100%;border-radius:100px;font-weight:700;cursor:pointer;font-size:1.05rem;transition:var(--transition);}
+  .btn-pay:hover{background:var(--accent-secondary);}
+  .qr-section{text-align:center;display:none;}
+  .qr-section.active{display:block;}
+  #qr-image{max-width:240px;width:100%;border-radius:10px;margin:14px 0;}
+  .instruction{font-size:.92rem;color:#555;}
+  .instruction b{color:var(--accent-primary);}
+  .waiting{margin-top:14px;color:#b8860b;font-weight:600;}
+  .test-badge{display:inline-block;background:#fff3cd;color:#856404;font-size:.78rem;padding:3px 10px;border-radius:100px;margin-top:8px;}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <div class="container nav-content">
+    <a href="/" class="logo-link"><img src="/logo.png" alt="HerFit" class="logo-img" style="height:56px;"></a>
+    <a href="index.html" class="btn btn-primary" style="padding:10px 24px;">Quay lại sản phẩm</a>
+  </div>
+</header>
+
+<section class="co">
+  <div class="container co-box">
+    <!-- FORM -->
+    <div id="checkout-form">
+      <h2 style="font-size:1.5rem;margin-bottom:6px;">Thông tin nhận file</h2>
+      <p style="color:#666;margin-bottom:20px;font-size:.95rem;">Điền thông tin để HerFit khởi tạo mã thanh toán và gửi file vào email cho bạn.</p>
+
+      <div class="prod" style="margin-bottom:22px;">
+        <h3>HerFit Home &amp; Gym — Tự tập 4 tuần</h3>
+        <div class="p" id="price-label">49.000đ</div>
+        <div class="test-badge" id="test-badge" style="display:none;">Chế độ TEST — 2.000đ</div>
+      </div>
+
+      <div class="form-group"><label>Họ và tên</label><input type="text" id="cusName" placeholder="Ví dụ: Nguyễn Thị A" required></div>
+      <div class="form-group"><label>Số điện thoại</label><input type="text" id="cusContact" placeholder="Ví dụ: 0901234567" required></div>
+      <div class="form-group"><label>Email (nhận file &amp; xác nhận)</label><input type="email" id="cusEmail" placeholder="email@domain.com" required></div>
+
+      <button class="btn-pay" id="btn-generate"><i class="fa-solid fa-qrcode"></i> Lấy mã thanh toán</button>
+    </div>
+
+    <!-- QR -->
+    <div class="qr-section" id="qr-section">
+      <h3 style="color:var(--text-primary);font-family:var(--font-body);">Quét mã để thanh toán</h3>
+      <p style="font-size:.92rem;color:#666;">Hệ thống tự động xác nhận ngay khi bạn chuyển khoản thành công.</p>
+      <img id="qr-image" src="" alt="VietQR">
+      <div class="instruction">
+        <p><strong>Nội dung CK:</strong> <b id="txt-content"></b></p>
+        <p><strong>Số tiền:</strong> <b id="txt-amount"></b> VNĐ</p>
+        <p>Ngân hàng: MBBank · Chủ TK: LE VAN SY</p>
+      </div>
+      <p class="waiting" id="waiting"><i class="fa-solid fa-spinner fa-spin"></i> Đang chờ xác nhận thanh toán…</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Chế độ test: thêm ?test=1 vào URL để mua thử với 2.000đ (Bước E)
+  const isTest = new URLSearchParams(location.search).get('test') === '1';
+  const PRICE = isTest ? 2000 : 49000;
+  document.getElementById('price-label').innerText = PRICE.toLocaleString('vi-VN') + 'đ';
+  if (isTest) document.getElementById('test-badge').style.display = 'inline-block';
+
+  document.getElementById('btn-generate').addEventListener('click', function () {
+    const name = document.getElementById('cusName').value.trim();
+    const contact = document.getElementById('cusContact').value.trim();
+    const email = document.getElementById('cusEmail').value.trim();
+
+    if (!name || !contact || !email) { alert('Vui lòng điền đủ Họ tên, Số điện thoại và Email!'); return; }
+    const phoneRegex = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!phoneRegex.test(contact)) { alert('Số điện thoại chưa hợp lệ (10 số, bắt đầu bằng 0 hoặc +84)!'); return; }
+    if (!emailRegex.test(email)) { alert('Email chưa hợp lệ!'); return; }
+
+    const orderId = 'HG' + Math.floor(1000 + Math.random() * 9000);
+
+    // Sepay VietQR — dùng lại đúng tài khoản hệ thống đang chạy
+    const acc = '0987873729', bank = 'MBBank', holder = 'LE VAN SY';
+    const qrUrl = `https://qr.sepay.vn/img?acc=${acc}&bank=${bank}&amount=${PRICE}&des=${orderId}&template=compact&showinfo=true&holder=${encodeURIComponent(holder)}`;
+
+    document.getElementById('qr-image').src = qrUrl;
+    document.getElementById('txt-content').innerText = orderId;
+    document.getElementById('txt-amount').innerText = PRICE.toLocaleString('vi-VN');
+
+    document.getElementById('checkout-form').style.display = 'none';
+    document.querySelector('.co-box').style.gridTemplateColumns = '1fr';
+    document.querySelector('.co-box').style.maxWidth = '480px';
+    document.getElementById('qr-section').classList.add('active');
+
+    // Tạo đơn pending qua API có sẵn (không đổi)
+    fetch('/api/create_order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, contact, email, orderId, price: PRICE, status: 'pending' })
+    }).catch(e => console.log('API create_order error', e));
+
+    pollStatus(orderId);
+  });
+
+  function pollStatus(orderId) {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/check_order/' + orderId + '?t=' + Date.now(), { cache: 'no-store' });
+        const data = await res.json();
+        if (data.status === 'success') {
+          clearInterval(interval);
+          location.href = 'cam-on.html?order=' + orderId;
+        }
+      } catch (e) {}
+    }, 3000);
+  }
+</script>
+</body>
+</html>

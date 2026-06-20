@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HerFit Home &amp; Gym — Chương trình tự tập 4 tuần cho nữ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#d17856;
+    --coral-dark:#b35c3c;
+    --rose:#e8a08a;
+    --ink:#2b2622;
+    --muted:#6b625b;
+    --cream:#f7f3ee;
+    --card:#fffdfb;
+    --line:#ece3da;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--cream);color:var(--ink);
+    font-family:'Be Vietnam Pro',system-ui,sans-serif;
+    font-weight:400;line-height:1.7;font-size:16px;
+  }
+  h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;}
+  .page{
+    max-width:760px;margin:0 auto;background:var(--card);
+    padding:64px 60px;border-bottom:1px solid var(--line);
+  }
+  .page:first-of-type{border-top:none;}
+  /* COVER */
+  .cover{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    background:linear-gradient(135deg,#2b2622 0%,#4a3a30 55%,var(--coral-dark) 130%);
+    color:#fff;text-align:center;padding:60px 50px;
+  }
+  .cover .kicker{letter-spacing:.28em;text-transform:uppercase;font-size:.72rem;color:var(--rose);font-weight:600;}
+  .cover h1{font-size:3.1rem;line-height:1.08;margin:.5em 0 .3em;font-weight:700;}
+  .cover .sub{font-size:1.15rem;color:#f0e4da;max-width:34ch;margin:0 auto 2em;font-weight:300;}
+  .cover .brand{font-weight:700;letter-spacing:.02em;font-size:1.05rem;}
+  .cover .brand b{color:var(--coral);}
+  .cover .tagline{margin-top:6px;font-size:.85rem;color:#cdc3ba;}
+  .badge{display:inline-block;border:1px solid rgba(255,255,255,.35);border-radius:100px;padding:6px 16px;font-size:.78rem;margin-top:24px;color:#f0e4da;}
+  /* TYPО */
+  .page h2{font-size:2rem;color:var(--ink);margin:0 0 .2em;line-height:1.15;}
+  .page .chap-no{color:var(--coral);font-weight:600;letter-spacing:.18em;text-transform:uppercase;font-size:.74rem;}
+  .page h3{font-size:1.25rem;margin:1.8em 0 .4em;color:var(--coral-dark);}
+  p{margin:0 0 1em;}
+  .lead{font-size:1.12rem;color:var(--muted);}
+  ul,ol{margin:0 0 1.2em;padding-left:1.3em;}
+  li{margin-bottom:.5em;}
+  strong{color:var(--ink);}
+  a{color:var(--coral-dark);}
+  /* BOXES */
+  .takeaway{
+    background:linear-gradient(180deg,#fff6f1,#fdeee6);
+    border-left:4px solid var(--coral);border-radius:10px;
+    padding:18px 22px;margin:1.6em 0;
+  }
+  .takeaway .t{font-weight:700;color:var(--coral-dark);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+  .note{background:#f4f7f4;border:1px solid #dde7dd;border-radius:10px;padding:16px 20px;margin:1.4em 0;font-size:.95rem;color:#41514a;}
+  .note b{color:#2f4439;}
+  /* EXERCISE */
+  .ex{display:flex;gap:18px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0;background:var(--card);}
+  .ex-fig{flex:0 0 116px;}
+  .figsvg{width:116px;height:auto;display:block;}
+  .ex-body{flex:1;min-width:0;}
+  .ex h4{margin:0 0 4px;font-size:1.05rem;font-family:'Be Vietnam Pro';font-weight:600;}
+  .ex .meta{font-size:.82rem;color:var(--coral-dark);font-weight:600;margin-bottom:8px;}
+  .ex .cue{font-size:.92rem;color:var(--muted);margin:0;}
+  @media (max-width:640px){.ex{flex-direction:column;align-items:flex-start;} .ex-fig{align-self:center;}}
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.92rem;}
+  th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;}
+  th{background:#f3e9e1;color:var(--coral-dark);font-weight:600;}
+  tr:nth-child(even) td{background:#fdfaf7;}
+  /* TOC */
+  .toc a{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);text-decoration:none;color:var(--ink);}
+  .toc a:hover{color:var(--coral-dark);}
+  .toc .num{color:var(--coral);font-weight:600;font-family:'Fraunces';}
+  /* COMPONENTS */
+  .pill{display:inline-block;background:#f3e9e1;color:var(--coral-dark);border-radius:100px;padding:3px 12px;font-size:.78rem;font-weight:600;margin:0 6px 6px 0;}
+  .cta{background:var(--ink);color:#fff;border-radius:16px;padding:40px;text-align:center;margin-top:10px;}
+  .cta h2{color:#fff;}
+  .cta .btn{display:inline-block;background:var(--coral);color:#fff;text-decoration:none;font-weight:600;padding:14px 30px;border-radius:100px;margin-top:14px;}
+  .foot{text-align:center;color:var(--muted);font-size:.85rem;padding:30px;}
+  @media print{
+    body{background:#fff;font-size:11.5pt;}
+    .page{max-width:none;padding:34px 40px;border:none;page-break-after:always;}
+    .cover{min-height:96vh;page-break-after:always;}
+    a{color:var(--ink);}
+  }
+  @media (max-width:640px){
+    .page{padding:40px 24px;}
+    .cover h1{font-size:2.2rem;}
+    .cover{padding:50px 28px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <div class="kicker">Chương trình tự tập · 4 tuần</div>
+  <h1>HerFit<br>Home &amp; Gym</h1>
+  <p class="sub">Tự tập tại nhà và phòng gym — khỏe đẹp bền vững mà không cần thuê PT.</p>
+  <div class="badge">Dành riêng cho phụ nữ Việt · Khoa học · Không TPBS · Không body shaming</div>
+  <div style="margin-top:48px">
+    <div class="brand">Her<b>Fit</b>™</div>
+    <div class="tagline">Tập luyện tử tế · Đồng hành bền vững</div>
+  </div>
+</section>
+
+<!-- ============ MỤC LỤC ============ -->
+<section class="page" id="muc-luc">
+  <span class="chap-no">Mục lục</span>
+  <h2>Trong cuốn này có gì</h2>
+  <div class="toc">
+    <a href="#mo-dau"><span><span class="num">00</span> &nbsp; Mở đầu — Bạn tự tập được</span></a>
+    <a href="#ch1"><span><span class="num">01</span> &nbsp; Nền tảng — Hiểu cơ thể &amp; tập an toàn</span></a>
+    <a href="#ch2"><span><span class="num">02</span> &nbsp; Tập tại nhà — Không cần phòng gym</span></a>
+    <a href="#ch3"><span><span class="num">03</span> &nbsp; Tập tại gym — Tự tin với máy &amp; tạ</span></a>
+    <a href="#ch4"><span><span class="num">04</span> &nbsp; Lịch tập 4 tuần</span></a>
+    <a href="#ch5"><span><span class="num">05</span> &nbsp; Dinh dưỡng cơm nhà</span></a>
+    <a href="#ch6"><span><span class="num">06</span> &nbsp; Giữ động lực đi đường dài</span></a>
+    <a href="#ket"><span><span class="num">07</span> &nbsp; Chặng tiếp theo của bạn</span></a>
+  </div>
+</section>
+
+<!-- ============ MỞ ĐẦU ============ -->
+<section class="page" id="mo-dau">
+  <span class="chap-no">Mở đầu</span>
+  <h2>Bạn tự tập được — thật đấy</h2>
+  <p class="lead">Bạn không cần một huấn luyện viên đứng kè kè mỗi buổi mới khỏe đẹp được. Bạn cần một lộ trình rõ ràng, an toàn, và đủ đơn giản để theo. Cuốn này là lộ trình đó.</p>
+
+  <p>Rất nhiều chị em muốn tập nhưng dừng lại vì ba lý do: không biết bắt đầu từ đâu, sợ tập sai gây đau, và ngại ánh nhìn ở phòng gym. HerFit viết cuốn này để gỡ đúng ba điều đó.</p>
+
+  <p>HerFit tin vào một cách tập khác với số đông: <strong>kháng lực khoa học kết hợp bữa cơm gia đình</strong>, không thực phẩm bổ sung, không ép cân thần tốc. Đi chậm hơn một chút, nhưng chắc và bền. Đó là cách giữ được vóc dáng cả đời, chứ không phải vài tuần rồi bỏ.</p>
+
+  <h3>Cuốn này dành cho ai</h3>
+  <ul>
+    <li>Bạn muốn tự tập tại nhà hoặc ở gym, không đủ ngân sách hay đơn giản là không muốn thuê PT.</li>
+    <li>Bạn là người mới, hoặc từng tập rồi bỏ, giờ muốn bắt đầu lại đúng cách.</li>
+    <li>Bạn muốn khỏe và săn chắc một cách bền vững — không phải "giảm 5kg trong 7 ngày".</li>
+  </ul>
+
+  <h3>Dùng cuốn này thế nào</h3>
+  <ol>
+    <li>Đọc hết Chương 1 trước khi tập — nền tảng an toàn quan trọng hơn mọi động tác.</li>
+    <li>Chọn nơi tập: nhà (Chương 2) hay gym (Chương 3), hoặc cả hai.</li>
+    <li>Bám theo Lịch 4 tuần ở Chương 4. Tập 3 buổi/tuần là đủ để bắt đầu.</li>
+    <li>Ăn theo nguyên tắc Chương 5. Tập tốt mà ăn sai thì kết quả đi chậm một nửa.</li>
+  </ol>
+
+  <div class="note"><b>Một lời thật lòng:</b> HerFit không hứa bạn "đẹp sau 7 ngày". HerFit hứa rằng nếu bạn theo đủ 4 tuần này, bạn sẽ thấy mình khỏe hơn, ngủ ngon hơn, và quen với việc tập — đó mới là thứ giữ bạn lại lâu dài.</div>
+
+  <div class="takeaway">
+    <div class="t">Ghi nhớ</div>
+    Khỏe đẹp không đến từ một buổi tập kiệt sức, mà từ những buổi tập đều đặn vừa sức. Bắt đầu nhỏ, đi đều, là thắng.
+  </div>
+</section>
+
+<!-- ============ CHƯƠNG 1 ============ -->
+<section class="page" id="ch1">
+  <span class="chap-no">Chương 01</span>
+  <h2>Nền tảng — Hiểu cơ thể &amp; tập an toàn</h2>
+  <p class="lead">Trước khi nâng bất cứ thứ gì, bạn cần ba thứ: biết cơ thể nữ khác gì, biết tập sao cho an toàn, và biết khởi động đúng.</p>
+
+  <h3>Cơ thể nữ tập kháng lực — đừng sợ "to con"</h3>
+  <p>Nỗi sợ phổ biến nhất: "Tập tạ rồi cơ bắp cuồn cuộn như vận động viên." Bạn yên tâm. Phụ nữ có lượng testosterone thấp hơn nam giới nhiều lần, nên rất khó tăng cơ bắp lớn. Tập kháng lực với chị em cho ra kết quả khác: <strong>săn chắc, gọn gàng, đường nét rõ hơn</strong> — chứ không "đô con".</p>
+  <p>Kháng lực còn giúp xương chắc hơn (quan trọng với phụ nữ khi lớn tuổi), trao đổi chất tốt hơn, và giữ dáng dễ hơn cardio đơn thuần.</p>
+
+  <h3>Ba nguyên tắc an toàn không được bỏ qua</h3>
+  <ul>
+    <li><strong>Đúng tư thế trước, nặng sau.</strong> Một động tác làm đúng với mức nhẹ tốt hơn làm sai với mức nặng. Sai tư thế là nguồn gốc của hầu hết chấn thương.</li>
+    <li><strong>Tăng tiến từ từ.</strong> Mỗi tuần tăng nhẹ số lần hoặc mức tạ. Đừng nhảy vọt.</li>
+    <li><strong>Lắng nghe cơ thể.</strong> Mỏi cơ là bình thường. Đau nhói ở khớp thì dừng lại — đó là tín hiệu sai tư thế hoặc quá sức.</li>
+  </ul>
+
+  <div class="note"><b>Trước khi bắt đầu:</b> Nếu bạn đang mang thai, mới sinh, có bệnh tim mạch, huyết áp, hay chấn thương cũ — hãy hỏi ý kiến bác sĩ trước. Cuốn này dành cho người khỏe mạnh bình thường, không thay thế tư vấn y tế.</div>
+
+  <h3>Khởi động 5 phút — luôn làm trước mỗi buổi</h3>
+  <p>Khởi động làm nóng cơ, bôi trơn khớp, giảm chấn thương. Làm lần lượt mỗi động tác ~45 giây:</p>
+  <ul>
+    <li>Xoay khớp cổ, vai, hông, gối, cổ tay — mỗi khớp 5–8 vòng mỗi chiều.</li>
+    <li>Đi bộ tại chỗ nâng cao gối — 45 giây.</li>
+    <li>Squat không tạ nhịp chậm — 10 cái.</li>
+    <li>Vung tay rộng &amp; gập người chạm mũi chân nhẹ nhàng — 10 cái.</li>
+  </ul>
+
+  <h3>Giãn cơ sau buổi tập</h3>
+  <p>Sau khi tập, giữ mỗi tư thế giãn 20–30 giây, thở đều, không giật: giãn đùi trước, đùi sau, mông, vai, lưng. Giãn cơ giúp đỡ đau mỏi ngày hôm sau và tăng độ linh hoạt.</p>
+
+  <div class="takeaway">
+    <div class="t">Ghi nhớ</div>
+    Tập tạ không làm bạn "to con" — nó làm bạn săn chắc. Tư thế đúng + tăng tiến từ từ + khởi động đủ = tập cả đời không chấn thương.
+  </div>
+</section>
+
+<!-- ============ CHƯƠNG 2 ============ -->
+<section class="page" id="ch2">
+  <span class="chap-no">Chương 02</span>
+  <h2>Tập tại nhà — Không cần phòng gym</h2>
+  <p class="lead">Bạn chỉ cần một khoảng sàn rộng bằng tấm thảm. Không có dụng cụ cũng tập được; có thêm một đôi tạ tay nhỏ hoặc dây kháng lực thì càng tốt.</p>
+
+  <div>
+    <span class="pill">Không dụng cụ</span>
+    <span class="pill">Tạ tay 1–3kg (tùy chọn)</span>
+    <span class="pill">Dây kháng lực (tùy chọn)</span>
+    <span class="pill">Chai nước thay tạ cũng được</span>
+  </div>
+
+  <h3>8 động tác cốt lõi tại nhà</h3>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="66" cy="24" r="7" fill="#c0623f"/><path d="M66 31 L72 52 M67 36 L48 42 M72 52 L55 55 L57 86"/></g></svg></div>
+    <div class="ex-body"><h4>1. Squat (gánh đùi tay không)</h4>
+    <div class="meta">Mông, đùi · 3 hiệp × 12 lần</div>
+    <p class="cue">Đứng rộng bằng vai, mũi chân hơi xoay ngoài. Hạ người như ngồi ghế, đẩy hông ra sau, lưng thẳng, gối không vượt quá mũi chân quá nhiều. Đứng dậy siết mông.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="78" r="6" fill="#c0623f"/><path d="M38 80 L66 56 L84 60 L84 86"/></g></svg></div>
+    <div class="ex-body"><h4>2. Glute Bridge (đẩy hông)</h4>
+    <div class="meta">Mông, sau đùi · 3 × 15</div>
+    <p class="cue">Nằm ngửa, co gối, bàn chân chạm sàn. Siết mông đẩy hông lên cao tạo đường thẳng từ gối đến vai. Giữ 1 giây rồi hạ.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="40" cy="56" r="6" fill="#c0623f"/><path d="M45 60 L82 84 M48 64 L48 86"/></g></svg></div>
+    <div class="ex-body"><h4>3. Chống đẩy kê gối</h4>
+    <div class="meta">Ngực, tay sau, vai · 3 × 8–12</div>
+    <p class="cue">Quỳ gối, tay rộng hơn vai. Hạ ngực xuống gần sàn, khuỷu tay khoảng 45°, rồi đẩy lên. Giữ thân người thẳng, không võng lưng.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="20" r="7" fill="#c0623f"/><path d="M60 27 L60 48 M60 48 L44 64 L44 86 M60 48 L76 66 L84 86 M60 34 L46 42"/></g></svg></div>
+    <div class="ex-body"><h4>4. Lunge (bước tới)</h4>
+    <div class="meta">Đùi, mông, thăng bằng · 3 × 10 mỗi chân</div>
+    <p class="cue">Bước một chân tới trước, hạ gối sau gần chạm sàn, hai gối ~90°. Đẩy gót chân trước để về vị trí ban đầu. Đổi chân.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="34" cy="58" r="6" fill="#c0623f"/><path d="M40 62 L90 80 M42 64 L42 84 L60 84"/></g></svg></div>
+    <div class="ex-body"><h4>5. Plank (giữ thân)</h4>
+    <div class="meta">Bụng, lưng, toàn thân · 3 × 20–40 giây</div>
+    <p class="cue">Chống cẳng tay, thân người thẳng từ đầu đến gót. Siết bụng và mông, không để hông tụt hay nhô. Thở đều.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="60" r="6" fill="#c0623f"/><path d="M34 64 Q60 86 90 60"/></g></svg></div>
+    <div class="ex-body"><h4>6. Superman (nâng lưng)</h4>
+    <div class="meta">Lưng dưới · 3 × 12</div>
+    <p class="cue">Nằm sấp, tay duỗi trước. Nâng đồng thời tay và chân lên khỏi sàn, siết lưng dưới, giữ 1 giây rồi hạ.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="22" r="7" fill="#c0623f"/><path d="M50 29 L50 64 M50 64 L43 86 M50 64 L58 86 M50 38 L72 44"/><path d="M72 44 L94 42" stroke-dasharray="3 3"/></g><rect x="94" y="34" width="6" height="18" rx="2" fill="#e3b9a6"/></svg></div>
+    <div class="ex-body"><h4>7. Standing Row với dây kháng lực</h4>
+    <div class="meta">Lưng giữa, tay trước · 3 × 12</div>
+    <p class="cue">Vòng dây quanh vật chắc ngang ngực (hoặc giẫm dây). Kéo khuỷu tay ra sau, siết hai bả vai lại với nhau, rồi thả từ từ. Không có dây thì mô phỏng động tác chèo, siết bả vai.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="66" r="6" fill="#c0623f"/><path d="M36 70 L64 73 M64 73 L90 76 M64 73 L86 54"/></g></svg></div>
+    <div class="ex-body"><h4>8. Side-Lying Leg Raise (nâng chân nghiêng)</h4>
+    <div class="meta">Mông ngoài, hông · 3 × 15 mỗi bên</div>
+    <p class="cue">Nằm nghiêng, nâng chân trên thẳng lên cao chừng 45°, hạ chậm. Giữ thân ổn định, không lăn người.</p></div></div>
+
+  <div class="note">Nghỉ 45–60 giây giữa các hiệp. Cả buổi tại nhà gọn trong 30–40 phút.</div>
+
+  <div class="takeaway">
+    <div class="t">Ghi nhớ</div>
+    Không có dụng cụ vẫn tập kháng lực được nhờ trọng lượng cơ thể. Quan trọng là làm đúng và đủ số lần, không phải tập nặng.
+  </div>
+</section>
+
+<!-- ============ CHƯƠNG 3 ============ -->
+<section class="page" id="ch3">
+  <span class="chap-no">Chương 03</span>
+  <h2>Tập tại gym — Tự tin với máy &amp; tạ</h2>
+  <p class="lead">Phòng gym không đáng sợ. Bạn không cần biết hết mọi máy — chỉ cần thuộc vài bài cốt lõi và làm chúng cho tốt. Không ai để ý bạn nhiều như bạn nghĩ đâu.</p>
+
+  <div class="note"><b>Mẹo vượt ngại:</b> Đi vào giờ vắng (giữa buổi sáng hoặc đầu giờ chiều) trong tuần đầu. Mang tai nghe, đi theo đúng lịch in sẵn. Khi đã quen mặt vài máy, sự ngại sẽ tự biến mất.</div>
+
+  <h3>8 bài kháng lực cốt lõi tại gym</h3>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><rect x="30" y="36" width="8" height="44" rx="3" fill="#e3b9a6"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="84" cy="38" r="7" fill="#c0623f"/><path d="M84 45 L88 70 M86 66 L62 58 L46 64"/></g></svg></div>
+    <div class="ex-body"><h4>1. Leg Press (máy đạp đùi)</h4>
+    <div class="meta">Đùi, mông · 3 × 12</div>
+    <p class="cue">Đặt chân rộng bằng vai trên bàn đạp. Hạ tới khi gối ~90°, đẩy ra nhưng không khóa cứng gối. Bắt đầu mức nhẹ để quen máy.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="42" y1="18" x2="78" y2="18" stroke="#e3b9a6" stroke-width="4" stroke-linecap="round"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="34" r="7" fill="#c0623f"/><path d="M60 41 L60 64 M60 44 L48 20 M60 44 L72 20 M60 64 L78 66 L78 84"/></g></svg></div>
+    <div class="ex-body"><h4>2. Lat Pulldown (kéo xô)</h4>
+    <div class="meta">Lưng, tay trước · 3 × 12</div>
+    <p class="cue">Nắm thanh rộng hơn vai, kéo xuống trước ngực, siết bả vai, thả lên từ từ. Giữ thân hơi ngả sau, không giật bằng lưng.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="40" cy="32" r="7" fill="#c0623f"/><path d="M40 39 L40 62 M40 46 L60 50 M40 62 L66 64 L66 84"/><path d="M60 50 L90 50" stroke-dasharray="3 3"/></g><rect x="90" y="40" width="6" height="20" rx="2" fill="#e3b9a6"/></svg></div>
+    <div class="ex-body"><h4>3. Seated Row (chèo ngồi)</h4>
+    <div class="meta">Lưng giữa · 3 × 12</div>
+    <p class="cue">Kéo tay cầm về phía bụng, khuỷu tay sát người, siết hai bả vai. Lưng giữ thẳng, không ngả tới ngả lui.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><rect x="50" y="34" width="13" height="11" rx="2" fill="#e3b9a6"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="64" cy="22" r="7" fill="#c0623f"/><path d="M64 29 L70 50 M70 50 L53 53 L55 86 M65 34 L54 39"/></g></svg></div>
+    <div class="ex-body"><h4>4. Dumbbell Goblet Squat</h4>
+    <div class="meta">Mông, đùi · 3 × 12</div>
+    <p class="cue">Ôm một quả tạ đơn trước ngực, squat xuống sâu, lưng thẳng, đẩy gót đứng dậy. Tạ giúp giữ thăng bằng tốt hơn squat tay không.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><rect x="24" y="60" width="22" height="6" rx="2" fill="#e3b9a6"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="54" r="6" fill="#c0623f"/><path d="M38 58 L66 54 L84 58 L84 86"/><circle cx="66" cy="48" r="5" fill="#fbf0ea"/></g></svg></div>
+    <div class="ex-body"><h4>5. Hip Thrust với thanh đòn / máy</h4>
+    <div class="meta">Mông · 3 × 12</div>
+    <p class="cue">Tựa lưng trên vào ghế băng, đặt tạ lên hông (có đệm), đẩy hông lên siết mông, hạ chậm. Bài số một cho vòng ba.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><rect x="42" y="18" width="11" height="7" rx="2" fill="#e3b9a6"/><rect x="67" y="18" width="11" height="7" rx="2" fill="#e3b9a6"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="34" r="7" fill="#c0623f"/><path d="M60 41 L60 64 M60 42 L48 26 M60 42 L72 26 M60 64 L52 84 M60 64 L68 84"/></g></svg></div>
+    <div class="ex-body"><h4>6. Dumbbell Shoulder Press</h4>
+    <div class="meta">Vai · 3 × 12</div>
+    <p class="cue">Ngồi thẳng lưng, đẩy hai tạ từ ngang vai lên trên đầu, hạ về có kiểm soát. Chọn mức nhẹ để giữ đúng tư thế.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><rect x="30" y="70" width="50" height="6" rx="3" fill="#e3b9a6"/><rect x="82" y="50" width="6" height="8" rx="2" fill="#e3b9a6"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="64" r="6" fill="#c0623f"/><path d="M36 68 L72 68 M72 68 L86 54"/></g></svg></div>
+    <div class="ex-body"><h4>7. Leg Curl (máy gập đùi sau)</h4>
+    <div class="meta">Sau đùi · 3 × 12</div>
+    <p class="cue">Gập gót chân về phía mông qua sức cản của máy, siết cơ sau đùi, thả ra từ từ. Cân bằng với bài đùi trước.</p></div></div>
+
+  <div class="ex">
+    <div class="ex-fig"><svg class="figsvg" viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="116" height="92" rx="14" fill="#fbf0ea"/><line x1="18" y1="86" x2="102" y2="86" stroke="#e3b9a6" stroke-width="2"/><g fill="none" stroke="#c0623f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="34" cy="58" r="6" fill="#c0623f"/><path d="M40 62 L90 80 M42 64 L42 84 L60 84"/></g></svg></div>
+    <div class="ex-body"><h4>8. Plank / Cable Crunch</h4>
+    <div class="meta">Bụng · 3 × 30–40 giây hoặc 15 lần</div>
+    <p class="cue">Plank như Chương 2, hoặc dùng dây cáp gập bụng có kiểm soát. Siết bụng chủ động, không kéo bằng tay.</p></div></div>
+
+  <div class="takeaway">
+    <div class="t">Ghi nhớ</div>
+    Bạn không cần thuộc cả phòng gym. Thuộc 8 bài này, làm đúng, tăng tiến đều — vậy là đủ để khỏe đẹp.
+  </div>
+</section>
+
+<!-- ============ CHƯƠNG 4 ============ -->
+<section class="page" id="ch4">
+  <span class="chap-no">Chương 04</span>
+  <h2>Lịch tập 4 tuần</h2>
+  <p class="lead">Tập 3 buổi/tuần, cách ngày để cơ phục hồi. Mỗi buổi gồm: khởi động 5 phút → bài chính → giãn cơ. Bạn tập ở nhà hay gym đều theo khung này, chỉ thay động tác tương ứng.</p>
+
+  <h3>Khung tuần</h3>
+  <table>
+    <tr><th>Thứ</th><th>Buổi</th><th>Trọng tâm</th></tr>
+    <tr><td>Thứ 2</td><td>Buổi A</td><td>Toàn thân — thân dưới nhiều hơn</td></tr>
+    <tr><td>Thứ 3</td><td>Nghỉ / đi bộ</td><td>Phục hồi nhẹ nhàng</td></tr>
+    <tr><td>Thứ 4</td><td>Buổi B</td><td>Toàn thân — thân trên nhiều hơn</td></tr>
+    <tr><td>Thứ 5</td><td>Nghỉ</td><td>—</td></tr>
+    <tr><td>Thứ 6</td><td>Buổi C</td><td>Toàn thân — mông &amp; bụng</td></tr>
+    <tr><td>T7 / CN</td><td>Nghỉ / vận động vui</td><td>Đi bộ, đạp xe, yoga nhẹ</td></tr>
+  </table>
+
+  <h3>Tăng tiến qua 4 tuần</h3>
+  <table>
+    <tr><th>Tuần</th><th>Mục tiêu</th><th>Cách làm</th></tr>
+    <tr><td>Tuần 1</td><td>Làm quen &amp; đúng tư thế</td><td>Mức nhẹ, tập trung vào tư thế. 2 hiệp mỗi bài nếu thấy đuối.</td></tr>
+    <tr><td>Tuần 2</td><td>Vào nhịp</td><td>Đủ 3 hiệp mỗi bài. Giữ nguyên mức tạ, làm mượt hơn.</td></tr>
+    <tr><td>Tuần 3</td><td>Tăng nhẹ thử thách</td><td>Tăng 1–2kg hoặc thêm 2 lần mỗi hiệp ở bài bạn thấy dễ.</td></tr>
+    <tr><td>Tuần 4</td><td>Củng cố</td><td>Giữ mức tuần 3, làm chuẩn từng lần. Ghi lại tiến bộ.</td></tr>
+  </table>
+
+  <div class="note"><b>Quy tắc tăng tạ đơn giản:</b> Nếu hiệp cuối của một bài bạn vẫn làm dễ dàng và còn dư sức 3–4 lần, tuần sau tăng nhẹ. Nếu chật vật giữ tư thế, giữ nguyên thêm một tuần.</div>
+
+  <h3>Gợi ý ghép động tác mỗi buổi</h3>
+  <table>
+    <tr><th>Buổi A (thân dưới)</th><th>Buổi B (thân trên)</th><th>Buổi C (mông &amp; bụng)</th></tr>
+    <tr>
+      <td>Squat<br>Lunge<br>Glute Bridge<br>Plank</td>
+      <td>Chống đẩy / Shoulder Press<br>Row (dây hoặc máy)<br>Lat Pulldown<br>Superman</td>
+      <td>Hip Thrust / Glute Bridge<br>Side-Lying Leg Raise<br>Leg Curl<br>Plank + gập bụng</td>
+    </tr>
+  </table>
+
+  <div class="takeaway">
+    <div class="t">Ghi nhớ</div>
+    3 buổi/tuần là đủ để thấy thay đổi. Đều đặn 4 tuần quan trọng hơn một tuần tập điên cuồng rồi nghỉ.
+  </div>
+</section>
+
+<!-- ============ CHƯƠNG 5 ============ -->
+<section class="page" id="ch5">
+  <span class="chap-no">Chương 05</span>
+  <h2>Dinh dưỡng cơm nhà</h2>
+  <p class="lead">Bạn không cần thực phẩm bổ sung đắt tiền hay thực đơn lạ. Bữa cơm gia đình Việt, nếu cân đối đúng, là đủ để bạn khỏe và giữ dáng.</p>
+
+  <h3>Nguyên tắc đĩa cơm cân bằng</h3>
+  <p>Hình dung mỗi bữa chính chia làm các phần:</p>
+  <ul>
+    <li><strong>1/4 đạm:</strong> thịt nạc, cá, trứng, tôm, đậu phụ. Đạm giúp cơ phục hồi sau tập.</li>
+    <li><strong>1/4 tinh bột:</strong> cơm, khoai, bún. Chọn lượng vừa đủ, ưu tiên gạo lứt nếu hợp khẩu vị.</li>
+    <li><strong>1/2 rau củ:</strong> luộc, xào ít dầu, canh. Rau làm bạn no lâu và đủ chất xơ.</li>
+    <li><strong>Chất béo tốt:</strong> một ít dầu ăn, lạc, vừng, quả bơ — vừa phải.</li>
+  </ul>
+
+  <h3>Bữa mẫu một ngày (tham khảo)</h3>
+  <table>
+    <tr><th>Bữa</th><th>Gợi ý</th></tr>
+    <tr><td>Sáng</td><td>2 quả trứng + 1 lát bánh mì / cháo yến mạch + sữa không đường + 1 quả chuối</td></tr>
+    <tr><td>Trưa</td><td>Cơm vừa bát + cá kho / ức gà + rau luộc + canh</td></tr>
+    <tr><td>Xế</td><td>1 hũ sữa chua không đường + ít hạt, hoặc 1 quả táo</td></tr>
+    <tr><td>Tối</td><td>Cơm ít hơn trưa + đậu phụ / tôm + nhiều rau xào ít dầu</td></tr>
+  </table>
+
+  <h3>Bốn thói quen đáng giá hơn mọi viên TPBS</h3>
+  <ul>
+    <li><strong>Uống đủ nước</strong> — 1.5–2 lít/ngày. Nhiều khi "đói" chỉ là khát.</li>
+    <li><strong>Đủ đạm mỗi bữa</strong> — cơ phục hồi nhờ đạm, không nhờ thuốc.</li>
+    <li><strong>Ngủ đủ 7–8 tiếng</strong> — cơ thể phục hồi và đốt mỡ khi ngủ.</li>
+    <li><strong>Ăn chậm, đủ no thì dừng</strong> — không cần nhịn đói khắc nghiệt.</li>
+  </ul>
+
+  <div class="note"><b>Quan điểm của HerFit:</b> HerFit không bán và không khuyến khích lạm dụng thực phẩm bổ sung. Một thực đơn cơm nhà cân đối, đủ đạm, đủ rau là nền tảng đủ tốt cho hầu hết chị em.</div>
+
+  <div class="takeaway">
+    <div class="t">Ghi nhớ</div>
+    Ăn đủ đạm, đủ rau, vừa tinh bột, uống đủ nước, ngủ đủ giấc. Đơn giản vậy thôi — và bền hơn mọi chế độ ăn kiêng khắc nghiệt.
+  </div>
+</section>
+
+<!-- ============ CHƯƠNG 6 ============ -->
+<section class="page" id="ch6">
+  <span class="chap-no">Chương 06</span>
+  <h2>Giữ động lực đi đường dài</h2>
+  <p class="lead">Thử thách lớn nhất không phải buổi tập nặng — mà là những ngày bạn không muốn tập. Đây là cách HerFit giúp bạn vượt qua.</p>
+
+  <h3>Đo tiến bộ — đừng chỉ nhìn cân nặng</h3>
+  <p>Cân nặng dao động theo nước, chu kỳ, bữa ăn — nó đánh lừa bạn. Khi tập kháng lực, cơ săn lại trong khi mỡ giảm, cân có thể đứng yên mà dáng vẫn đẹp lên. Hãy đo bằng nhiều cách:</p>
+  <ul>
+    <li>Chụp ảnh mỗi 2 tuần, cùng góc, cùng ánh sáng.</li>
+    <li>Đo vòng eo, mông, đùi bằng thước dây.</li>
+    <li>Để ý quần áo vừa hơn, leo cầu thang đỡ mệt hơn, ngủ ngon hơn.</li>
+  </ul>
+
+  <h3>Năm cách vượt ngày lười</h3>
+  <ul>
+    <li><strong>Quy tắc 5 phút:</strong> tự hứa chỉ tập 5 phút. Thường khi đã bắt đầu, bạn sẽ tập hết buổi.</li>
+    <li><strong>Đặt lịch cố định:</strong> coi buổi tập như cuộc hẹn không hủy.</li>
+    <li><strong>Chuẩn bị sẵn:</strong> để đồ tập ra từ tối hôm trước, giảm cớ trì hoãn.</li>
+    <li><strong>Tập cùng bạn:</strong> rủ một người bạn đồng hành, cùng nhắc nhau.</li>
+    <li><strong>Tha thứ khi lỡ buổi:</strong> bỏ một buổi không sao. Đừng bỏ luôn buổi tiếp theo — đó mới là điều quan trọng.</li>
+  </ul>
+
+  <div class="note"><b>Sự thật bền vững:</b> Không ai tập hoàn hảo 100% thời gian. Người giữ được dáng cả đời là người tập <i>đều đặn ở mức 80%</i>, không phải người ép mình 100% rồi kiệt sức bỏ cuộc.</div>
+
+  <div class="takeaway">
+    <div class="t">Ghi nhớ</div>
+    Tiến bộ không phải đường thẳng. Đo bằng nhiều cách, tha thứ cho ngày lười, và quay lại buổi tiếp theo. Kiên trì tử tế với bản thân chính là bí quyết.
+  </div>
+</section>
+
+<!-- ============ KẾT ============ -->
+<section class="page" id="ket">
+  <span class="chap-no">Chương 07</span>
+  <h2>Chặng tiếp theo của bạn</h2>
+  <p class="lead">Bạn vừa có trong tay một lộ trình đủ để bắt đầu và đi được 4 tuần đầu — chặng khó nhất. Giờ là lúc biến nó thành thói quen.</p>
+
+  <p>Sau 4 tuần này, bạn có thể lặp lại chu kỳ với mức tạ cao hơn, hoặc mở rộng thêm bài. Quan trọng nhất: bạn đã chứng minh được mình tự tập được, không cần ai kè kè.</p>
+
+  <p>Nếu đến lúc bạn muốn đi sâu hơn — lộ trình cá nhân hóa theo cơ thể bạn, theo dõi sát hơn, hoặc cộng đồng chị em cùng tập để giữ lửa — HerFit luôn ở đây để đồng hành. Tập luyện tử tế, đi đường dài cùng nhau.</p>
+
+  <div class="cta">
+    <h2>Bắt đầu buổi đầu tiên hôm nay</h2>
+    <p style="color:#e8ddd4;max-width:42ch;margin:0 auto;">Đừng đợi "thứ Hai tuần sau". Buổi tập tốt nhất là buổi bạn làm ngay hôm nay. Mở Chương 1, khởi động 5 phút, và bắt đầu.</p>
+    <a class="btn" href="#mo-dau">Quay lại lộ trình</a>
+  </div>
+</section>
+
+<div class="foot">
+  HerFit™ — Tập luyện tử tế · Đồng hành bền vững<br>
+  © 2026 HerFit. Tài liệu dành cho người mua. Vui lòng không sao chép, chia sẻ lại.
+</div>
+
+</body>
+</html>
