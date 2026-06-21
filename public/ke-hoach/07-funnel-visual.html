@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HerFit — Sơ đồ Phễu HVCO Hybrid</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f3ee; --ink:#2b2622; --muted:#6b625b; --card:#fff;
+    --ads:#f59e0b; --capture:#3b82f6; --nurture:#16a34a; --sales:#8b5cf6; --deliver:#14b8a6; --upsell:#d4a017;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'Be Vietnam Pro',sans-serif;padding:40px 20px;line-height:1.55;}
+  .wrap{max-width:920px;margin:0 auto;}
+  h1{font-size:1.9rem;text-align:center;}
+  .sub{text-align:center;color:var(--muted);margin:6px 0 28px;}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:30px;}
+  .lg{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted);}
+  .dot{width:13px;height:13px;border-radius:4px;}
+  .flow{display:flex;flex-direction:column;align-items:center;gap:0;}
+  .step{width:100%;max-width:560px;background:var(--card);border-radius:14px;padding:18px 22px;border-left:6px solid #ccc;box-shadow:0 4px 14px rgba(0,0,0,.05);}
+  .step .tag{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+  .step h3{font-size:1.1rem;margin:3px 0 4px;}
+  .step p{font-size:.9rem;color:var(--muted);}
+  .arrow{height:34px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.8rem;position:relative;}
+  .arrow span{background:var(--bg);padding:0 8px;z-index:1;}
+  .arrow::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:#d8cfc4;left:50%;transform:translateX(-50%);}
+  .branch{font-style:italic;}
+  .s-ads{border-color:var(--ads);} .s-ads .tag{color:var(--ads);}
+  .s-cap{border-color:var(--capture);} .s-cap .tag{color:var(--capture);}
+  .s-nur{border-color:var(--nurture);} .s-nur .tag{color:var(--nurture);}
+  .s-sal{border-color:var(--sales);} .s-sal .tag{color:var(--sales);}
+  .s-del{border-color:var(--deliver);} .s-del .tag{color:var(--deliver);}
+  .s-ups{border-color:var(--upsell);} .s-ups .tag{color:var(--upsell);}
+  .note{max-width:560px;margin:30px auto 0;background:#fff;border:1px dashed #d8cfc4;border-radius:12px;padding:16px 20px;font-size:.86rem;color:var(--muted);}
+  .note b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Phễu HerFit — <span style="color:var(--sales)">HVCO Hybrid</span></h1>
+  <p class="sub">Quà free → Tripwire 49k → Email nuôi → Chương trình HER 599k → Membership/App · Phương pháp HER</p>
+
+  <div class="legend">
+    <span class="lg"><span class="dot" style="background:var(--ads)"></span>Quảng cáo</span>
+    <span class="lg"><span class="dot" style="background:var(--capture)"></span>Thu lead</span>
+    <span class="lg"><span class="dot" style="background:var(--nurture)"></span>Nuôi dưỡng</span>
+    <span class="lg"><span class="dot" style="background:var(--sales)"></span>Bán hàng</span>
+    <span class="lg"><span class="dot" style="background:var(--deliver)"></span>Giao / Onboard</span>
+    <span class="lg"><span class="dot" style="background:var(--upsell)"></span>Upsell định kỳ</span>
+  </div>
+
+  <div class="flow">
+    <div class="step s-ads"><div class="tag">① Quảng cáo</div><h3>Ads Facebook</h3><p>Hook "tập rồi bỏ" → mời nhận quà free. Giờ vàng 20–22h, nữ 25–45t.</p></div>
+    <div class="arrow"><span>~1–2% click → ~12k/lead</span></div>
+
+    <div class="step s-cap"><div class="tag">② Thu lead</div><h3>Opt-in Page — Quà miễn phí</h3><p>"Lịch Tập Tại Nhà 7 Ngày — 15 phút/ngày". Đổi email/SĐT lấy quà.</p></div>
+    <div class="arrow"><span>~35–45% opt-in</span></div>
+
+    <div class="step s-del"><div class="tag">③ Giao + bán nhanh</div><h3>Thank-you + Tripwire Ebook 49k</h3><p>Giao quà + chào ngay ebook "HER Home &amp; Gym" 49k (vớt 3% nóng).</p></div>
+    <div class="arrow"><span>~8% mua tripwire · 100% vào chuỗi email</span></div>
+
+    <div class="step s-nur"><div class="tag">④ Nuôi dưỡng</div><h3>Chuỗi Email 5–7 bài</h3><p>Câu chuyện bỏ cuộc → trụ H → E → R → xử lý objection → mời lên Chương trình HER.</p></div>
+    <div class="arrow"><span>dẫn tới Sales Page</span></div>
+
+    <div class="step s-sal"><div class="tag">⑤ Bán hàng</div><h3>Sales Page — Chương Trình HER 8 Tuần</h3><p>Godfather offer: value stack 3,1tr → 599k + cam kết hoàn tiền 4 tuần + cohort.</p></div>
+    <div class="arrow"><span>~3% lead → đơn 599k</span></div>
+
+    <div class="step s-sal"><div class="tag">⑥ Thu tiền</div><h3>Order Page — VietQR (Sepay)</h3><p>Dùng lại flow thanh toán đã chạy. Tự đối soát + email xác nhận.</p></div>
+    <div class="arrow"><span>ngay sau khi mua →</span></div>
+
+    <div class="step s-ups"><div class="tag">⑦ Upsell định kỳ</div><h3>Membership / App HER — 149k/tháng</h3><p>Lộ trình mới mỗi tháng + cộng đồng + coaching-lite. Continuity Bonus nếu đăng ký hôm nay. <b>(= tầm nhìn App)</b></p></div>
+    <div class="arrow"><span>→</span></div>
+
+    <div class="step s-del"><div class="tag">⑧ Onboard / giữ chân</div><h3>Onboarding cộng đồng</h3><p>Welcome + buổi tập đầu + nhắc check-in tuần 1 → giảm hoàn tiền, tăng review.</p></div>
+  </div>
+
+  <div class="note">
+    <b>Vì sao phễu này?</b> Traffic lạnh từ Facebook cần nuôi trước khi bán 599k → HVCO Funnel làm đúng việc đó; tripwire 49k vớt 3% nóng và tạo tệp người-đã-trả-tiền. Không chọn Webinar/Application vì offer chưa &gt;10tr và cần scale tự động. <b>Rủi ro cần canh:</b> chất lượng creative FB (quyết giá lead) và chuỗi email (quyết % lên core).
+  </div>
+</div>
+</body>
+</html>

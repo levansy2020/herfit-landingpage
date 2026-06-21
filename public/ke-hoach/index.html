@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bản Kế Hoạch Kinh Doanh — HerFit</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--pink:#e81d60;--pink2:#ff4d85;--ink:#241c20;--muted:#6b6068;--cream:#fff5f8;--card:#fff;--line:#ffd9e6;--gold:#d4a017;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Be Vietnam Pro',sans-serif;color:var(--ink);line-height:1.6;background:#fff;}
+  h1,h2,h3{font-family:'Fraunces',serif;line-height:1.15;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px;}
+  a{color:inherit;}
+  /* nav */
+  .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .nav .inner{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:6px;padding:10px 22px;overflow-x:auto;}
+  .nav b{font-family:'Fraunces',serif;color:var(--pink);margin-right:10px;white-space:nowrap;}
+  .nav a{font-size:.82rem;color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:8px;white-space:nowrap;}
+  .nav a:hover{background:var(--cream);color:var(--pink);}
+  /* section */
+  section{padding:56px 0;border-bottom:1px solid #f3e6ec;}
+  .tag{display:inline-block;background:var(--cream);color:var(--pink);font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:100px;margin-bottom:12px;}
+  h2.st{font-size:1.9rem;margin-bottom:10px;}
+  p.sum{color:var(--muted);font-size:1.05rem;max-width:62ch;}
+  .btn{display:inline-block;margin-top:16px;background:var(--ink);color:#fff;text-decoration:none;font-weight:600;font-size:.9rem;padding:10px 20px;border-radius:100px;transition:.2s;}
+  .btn:hover{background:var(--pink);}
+  .btn.pink{background:var(--pink);} .btn.pink:hover{background:var(--pink2);}
+  .row{display:flex;flex-wrap:wrap;gap:10px;}
+  /* hero */
+  .hero{background:linear-gradient(180deg,var(--cream),#fff);text-align:center;padding:80px 0 60px;border:none;}
+  .hero h1{font-size:2.8rem;margin-bottom:12px;}
+  .hero .tl{font-size:1.25rem;color:var(--muted);max-width:48ch;margin:0 auto 8px;}
+  .hero .by{color:var(--muted);font-size:.9rem;margin-top:14px;}
+  /* her cards */
+  .her3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;}
+  @media(max-width:700px){.her3{grid-template-columns:1fr;}}
+  .herc{background:var(--cream);border-radius:14px;padding:18px;}
+  .herc .l{font-family:'Fraunces',serif;font-size:2rem;color:var(--pink);font-weight:700;}
+  .herc h4{font-family:'Be Vietnam Pro';margin:2px 0 6px;}
+  .herc p{font-size:.9rem;color:var(--muted);}
+  /* offer box */
+  .ob{background:#fff;border:2px solid var(--pink);border-radius:18px;padding:26px;text-align:center;margin-top:18px;}
+  .ob .pr{font-family:'Fraunces',serif;font-size:2.4rem;color:var(--pink);font-weight:700;}
+  .ladder{margin-top:16px;font-size:.95rem;color:var(--muted);}
+  .ladder b{color:var(--ink);}
+  /* asset grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;}
+  @media(max-width:760px){.grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:480px){.grid{grid-template-columns:1fr;}}
+  .gc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;}
+  .gc h4{font-family:'Be Vietnam Pro';font-size:1rem;margin-bottom:4px;}
+  .gc p{font-size:.85rem;color:var(--muted);flex:1;margin-bottom:12px;}
+  .gc a{font-size:.85rem;font-weight:600;color:var(--pink);text-decoration:none;}
+  .gc a:hover{text-decoration:underline;}
+  /* funnel iframe */
+  .frame{width:100%;height:760px;border:1px solid var(--line);border-radius:16px;margin-top:18px;background:#f7f3ee;}
+  /* roadmap */
+  .road{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;}
+  @media(max-width:760px){.road{grid-template-columns:1fr;}}
+  .rc{background:var(--cream);border-radius:14px;padding:20px;}
+  .rc .m{font-family:'Fraunces',serif;color:var(--pink);font-size:1.2rem;}
+  .rc ul{list-style:none;margin-top:8px;}
+  .rc li{font-size:.88rem;color:var(--muted);padding:5px 0;border-bottom:1px dashed var(--line);}
+  /* asks */
+  .asks{background:var(--ink);color:#fff;border-radius:20px;padding:34px;}
+  .asks h2{color:#fff;}
+  .abox{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;}
+  @media(max-width:760px){.abox{grid-template-columns:1fr;}}
+  .ac{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:18px;}
+  .ac h4{color:var(--pink2);font-family:'Be Vietnam Pro';margin-bottom:8px;}
+  .ac p,.ac li{color:#e8dde3;font-size:.9rem;}
+  .ac ul{margin-left:16px;}
+  .cta{text-align:center;margin-top:24px;}
+  .cta .big{display:inline-block;background:var(--pink);color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem;padding:14px 34px;border-radius:100px;}
+  footer{background:#241c20;color:#cdbfc7;text-align:center;padding:28px;font-size:.85rem;border:none;}
+  footer b{color:var(--pink2);}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="inner">
+  <b>HerFit</b>
+  <a href="#avatar">Khách hàng</a>
+  <a href="#voice">Giọng</a>
+  <a href="#her">Cơ chế HER</a>
+  <a href="#money">Tiền &amp; Offer</a>
+  <a href="#funnel">Phễu</a>
+  <a href="#assets">Assets</a>
+  <a href="#road">Roadmap</a>
+  <a href="#asks">ASKS</a>
+</div></nav>
+
+<!-- 1. HERO -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <span class="tag">Bản kế hoạch kinh doanh · Demo Day Ngày 21</span>
+    <h1>HerFit — Giải pháp tự tập tại nhà &amp; gym cho phụ nữ Việt</h1>
+    <p class="tl">"Healthy cơm nhà · Easy vừa sức · Routine đều đặn — để lần này bạn theo được tới cùng."</p>
+    <p class="by">Lê Văn Sỹ · HerFit · 21/06/2026</p>
+    <div style="margin-top:18px"><a href="#avatar" class="btn pink">Bắt đầu xem ↓</a></div>
+  </div>
+</section>
+
+<!-- 2. AVATAR -->
+<section id="avatar">
+  <div class="wrap">
+    <span class="tag">01 · Khách hàng</span>
+    <h2 class="st">Chị Hương, 32 tuổi — bận rộn &amp; từng bỏ cuộc</h2>
+    <p class="sum">Nhân viên văn phòng/mẹ bỉm, sau sinh thấy vóc dáng đi xuống và tự ti. Từng nhịn ăn, mua thẻ gym, tập theo clip — đều bỏ cuộc vì không có lộ trình rõ. Nỗi sợ lõi không nói với ai: <em>"hay mình cứ thế này mãi"</em>. Tụ tập trên Facebook/TikTok, mua hàng lúc 20–22h.</p>
+    <div class="row"><a class="btn" href="01-avatar.html" target="_blank">Xem avatar đầy đủ →</a></div>
+  </div>
+</section>
+
+<!-- 3. BRAND VOICE -->
+<section id="voice">
+  <div class="wrap">
+    <span class="tag">02 · Giọng thương hiệu</span>
+    <h2 class="st">Gần gũi · thấu cảm · tử tế</h2>
+    <p class="sum">Xưng "bạn", thương hiệu xưng "HerFit". Câu ngắn, mở bằng hook, không sáo rỗng. Ví dụ: <em>"Không phải do bạn lười. Là do chưa ai đưa bạn một lộ trình đủ đơn giản để theo."</em> Tránh từ ép buộc/body shaming.</p>
+    <div class="row"><a class="btn" href="02-brand-voice.html" target="_blank">Xem voice profile →</a></div>
+  </div>
+</section>
+
+<!-- 4. HERO MECHANISM -->
+<section id="her">
+  <div class="wrap">
+    <span class="tag">03 · Cơ chế độc quyền</span>
+    <h2 class="st">Phương pháp <span style="color:var(--pink)">HER</span></h2>
+    <p class="sum">Thị trường ép phụ nữ tập kiểu vận động viên (cấp tốc, khắc nghiệt) nên họ bỏ cuộc. HerFit thiết kế mọi thứ "vừa vặn" — nên theo được tới cùng.</p>
+    <div class="her3">
+      <div class="herc"><div class="l">H</div><h4>Healthy</h4><p>Ăn từ cơm nhà, không TPBS, không nhịn ăn.</p></div>
+      <div class="herc"><div class="l">E</div><h4>Easy</h4><p>Tập vừa sức, 20–40 phút, nhà hoặc gym.</p></div>
+      <div class="herc"><div class="l">R</div><h4>Routine</h4><p>Đều đặn 3 buổi/tuần, thắng nhỏ sớm.</p></div>
+    </div>
+    <div class="row"><a class="btn" href="03-hero-mechanism.html" target="_blank">Xem chi tiết cơ chế →</a></div>
+  </div>
+</section>
+
+<!-- 5. MONEY MODEL + OFFER -->
+<section id="money">
+  <div class="wrap">
+    <span class="tag">04–05 · Mô hình tiền &amp; Offer</span>
+    <h2 class="st">Thang sản phẩm dẫn tới App</h2>
+    <p class="sum ladder">Lead magnet free → <b>Ebook 49k</b> (tripwire) → <b>Chương trình HER 599k</b> (lõi) → <b>Membership/App 149k/tháng</b> (định kỳ). Mục tiêu 12 tháng: <b>1–3 tỷ</b>.</p>
+    <div class="ob">
+      <div style="font-size:.8rem;color:var(--muted);text-decoration:line-through;">Tổng giá trị 3.140.000đ</div>
+      <div class="pr">599.000đ</div>
+      <div style="color:var(--muted);font-size:.9rem;">Chương Trình HER 8 Tuần · cam kết hoàn tiền 4 tuần</div>
+    </div>
+    <div class="row" style="margin-top:16px;">
+      <a class="btn" href="04-money-model.html" target="_blank">Xem money model →</a>
+      <a class="btn" href="05-offer.html" target="_blank">Xem offer chi tiết →</a>
+      <a class="btn" href="06-hvco-leadmagnet.html" target="_blank">Xem lead magnet →</a>
+    </div>
+  </div>
+</section>
+
+<!-- 6. FUNNEL -->
+<section id="funnel">
+  <div class="wrap">
+    <span class="tag">07 · Bản thiết kế phễu</span>
+    <h2 class="st">Phễu HVCO Hybrid</h2>
+    <p class="sum">Ads FB → quà free → tripwire 49k → email nuôi → Chương trình HER 599k → Membership. Vớt 3% nóng ngay, nuôi 97% còn lại.</p>
+    <iframe class="frame" src="07-funnel-visual.html" title="Sơ đồ phễu"></iframe>
+    <div class="row"><a class="btn" href="07-funnel-blueprint.html" target="_blank">Xem blueprint chi tiết →</a><a class="btn" href="07-funnel-visual.html" target="_blank">Mở sơ đồ riêng →</a></div>
+  </div>
+</section>
+
+<!-- 7. ASSETS -->
+<section id="assets">
+  <div class="wrap">
+    <span class="tag">08–12 · Full funnel assets</span>
+    <h2 class="st">Toàn bộ "đạn" đã nạp sẵn</h2>
+    <p class="sum">Mọi copy đã viết xong, sẵn deploy — không phải mô tả, là asset thật.</p>
+    <div class="grid">
+      <div class="gc"><h4>📣 Ad Copy</h4><p>3 angle Facebook + opt-in + Google ad.</p><a href="08-ads-copy.html" target="_blank">Xem ads →</a></div>
+      <div class="gc"><h4>🖥️ Landing Page</h4><p>Sales page Chương trình HER 599k (render thật).</p><a href="08-landing.html" target="_blank">Xem live →</a></div>
+      <div class="gc"><h4>🎬 VSL Script</h4><p>Kịch bản video ~4 phút, có timestamp + gợi ý hình.</p><a href="09-vsl-script.html" target="_blank">Xem script →</a></div>
+      <div class="gc"><h4>✉️ Email Sequence</h4><p>Chuỗi 6 email nuôi (7 ngày): bỏ cuộc → H·E·R → mời mua.</p><a href="10-email-sequence.html" target="_blank">Xem emails →</a></div>
+      <div class="gc"><h4>🔁 Follow-up</h4><p>Email + Zalo nuôi lại lead lạnh, gỡ từng objection.</p><a href="11-follow-up.html" target="_blank">Xem follow-up →</a></div>
+      <div class="gc"><h4>📞 Sales Script</h4><p>Self-service → skip gọi chốt; script để dành tầng 1-1.</p><a href="12-sales-script.html" target="_blank">Xem ghi chú →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. ROADMAP -->
+<section id="road">
+  <div class="wrap">
+    <span class="tag">Roadmap 90 ngày</span>
+    <h2 class="st">3 tháng tới làm gì</h2>
+    <div class="road">
+      <div class="rc"><div class="m">Tháng 1 — Validation</div><ul><li>1.000 lead + 80 đơn ebook</li><li>Test 3 angle ads, đo CPL</li><li>10 review thật → chỉnh avatar</li></ul></div>
+      <div class="rc"><div class="m">Tháng 2 — Scale + bán core</div><ul><li>Hạ CPL, mở rộng tệp</li><li>Bật email + sales page HER</li><li>Mở cohort 1: 30 đơn 599k</li></ul></div>
+      <div class="rc"><div class="m">Tháng 3 — Optimize + App</div><ul><li>A/B tối ưu chuyển đổi</li><li>Ra mắt Membership v1 (149k/th)</li><li>Chốt tính năng App tối thiểu</li></ul></div>
+    </div>
+    <div class="row"><a class="btn" href="13-roadmap-asks.html" target="_blank">Xem roadmap đầy đủ →</a></div>
+  </div>
+</section>
+
+<!-- 9. ASKS -->
+<section id="asks">
+  <div class="wrap">
+    <div class="asks">
+      <span class="tag">ASKS</span>
+      <h2 class="st">Tôi cần gì để đi nhanh hơn</h2>
+      <div class="abox">
+        <div class="ac"><h4>Điểm yếu lớn nhất</h4><p>Chưa biết chạy Facebook ads hiệu quả (chưa kiểm soát CPL), chưa có audience/list, chưa rõ cách build app.</p></div>
+        <div class="ac"><h4>Mong được hỗ trợ</h4><ul><li>Setup ads + funnel (tối ưu CPL)</li><li>Coaching chiến lược ebook → app</li><li>Cộng đồng cùng level</li><li>Khóa Pro: FB ads sản phẩm số</li></ul></div>
+        <div class="ac"><h4>3 vấn đề sợ kẹt 90 ngày</h4><ul><li>CPL quá cao, không có lãi</li><li>Bán tripwire nhưng không lên được core</li><li>Kẹt kỹ thuật khi build Membership/App</li></ul></div>
+      </div>
+      <div class="cta">
+        <a class="big" href="13-roadmap-asks.html" target="_blank">Tôi sẵn sàng pitch ở Demo Day Ngày 21 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Her<b>Fit</b>™ — Tập luyện tử tế · Đồng hành bền vững · Phương pháp HER<br>
+  Bản kế hoạch kinh doanh © 2026 · Lê Văn Sỹ
+</footer>
+</body>
+</html>

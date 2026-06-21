@@ -26,6 +26,10 @@ const nextConfig = {
         source: '/san-pham/herfit-home-gym/cam-on',
         destination: '/san-pham/herfit-home-gym/cam-on.html',
       },
+      {
+        source: '/ke-hoach',
+        destination: '/ke-hoach/index.html',
+      },
     ]
   },
 }
